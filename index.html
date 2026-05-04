@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NNG Energy — İSG Aksiyon Takip Sistemi</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --green-dark: #1B6B2E;
+  --green-mid: #2A8C3F;
+  --green-light: #3DAA55;
+  --green-pale: #E8F5EC;
+  --green-soft: #C8E6C9;
+  --amber: #F59E0B;
+  --amber-pale: #FEF3C7;
+  --red: #DC2626;
+  --red-pale: #FEE2E2;
+  --blue: #2563EB;
+  --blue-pale: #DBEAFE;
+  --gray-900: #111827;
+  --gray-800: #1F2937;
+  --gray-700: #374151;
+  --gray-600: #4B5563;
+  --gray-400: #9CA3AF;
+  --gray-200: #E5E7EB;
+  --gray-100: #F3F4F6;
+  --white: #FFFFFF;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.12);
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #F0F4F1;
+  color: var(--gray-900);
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  background: var(--green-dark);
+  padding: 0 28px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+}
+.topbar-brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.brand-logo {
+  width: 34px; height: 34px;
+  background: var(--white);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px; color: var(--green-dark);
+  letter-spacing: -0.5px;
+}
+.brand-title {
+  font-size: 15px; font-weight: 600; color: var(--white);
+  letter-spacing: 0.2px;
+}
+.brand-sub {
+  font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 1px;
+}
+.topbar-pills {
+  display: flex; gap: 10px; align-items: center;
+}
+.tpill {
+  padding: 4px 12px; border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; gap: 5px;
+}
+.tpill-open { background: rgba(245,158,11,0.25); color: #FCD34D; }
+.tpill-closed { background: rgba(255,255,255,0.12); color: rgba(255,255,255,0.8); }
+.tpill-total { background: rgba(255,255,255,0.08); color: rgba(255,255,255,0.6); }
+.dot { width: 6px; height: 6px; border-radius: 50%; }
+.dot-amber { background: var(--amber); }
+.dot-green { background: #4ADE80; }
+.dot-white { background: rgba(255,255,255,0.4); }
+
+/* ── LAYOUT ── */
+.layout {
+  display: flex;
+  min-height: calc(100vh - 58px);
+}
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 240px;
+  background: var(--white);
+  border-right: 1px solid var(--gray-200);
+  padding: 20px 0;
+  flex-shrink: 0;
+  position: sticky;
+  top: 58px;
+  height: calc(100vh - 58px);
+  overflow-y: auto;
+}
+.sidebar-section {
+  padding: 0 16px 20px;
+}
+.sidebar-label {
+  font-size: 10px; font-weight: 600; color: var(--gray-400);
+  letter-spacing: 1.2px; text-transform: uppercase;
+  padding: 0 8px; margin-bottom: 8px;
+}
+.filter-btn {
+  display: flex; align-items: center; justify-content: space-between;
+  width: 100%; padding: 7px 10px; border-radius: var(--radius-sm);
+  border: none; cursor: pointer;
+  background: transparent; color: var(--gray-700);
+  font-size: 13px; font-family: 'DM Sans', sans-serif;
+  font-weight: 500; transition: all 0.15s;
+  margin-bottom: 2px;
+}
+.filter-btn:hover { background: var(--green-pale); color: var(--green-dark); }
+.filter-btn.active { background: var(--green-pale); color: var(--green-dark); font-weight: 600; }
+.filter-count {
+  font-size: 11px; font-weight: 600;
+  background: var(--gray-100); color: var(--gray-600);
+  padding: 1px 7px; border-radius: 10px;
+}
+.filter-btn.active .filter-count { background: var(--green-soft); color: var(--green-dark); }
+.sidebar-divider {
+  height: 1px; background: var(--gray-200); margin: 4px 0 16px;
+}
+
+/* Risk seviyeleri */
+.risk-filter { gap: 0; }
+.risk-item {
+  display: flex; align-items: center; gap: 8px;
+  padding: 6px 10px; border-radius: var(--radius-sm);
+  cursor: pointer; transition: background 0.15s;
+  font-size: 12.5px; color: var(--gray-700); font-weight: 500;
+  margin-bottom: 2px;
+}
+.risk-item:hover { background: var(--gray-100); }
+.risk-item.active { background: var(--gray-100); }
+.risk-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+/* ── MAIN ── */
+.main {
+  flex: 1;
+  padding: 24px;
+  min-width: 0;
+}
+
+/* ── TOOLBAR ── */
+.toolbar {
+  display: flex; gap: 12px; align-items: center;
+  margin-bottom: 20px; flex-wrap: wrap;
+}
+.search-wrap {
+  position: relative; flex: 1; min-width: 220px;
+}
+.search-wrap svg {
+  position: absolute; left: 12px; top: 50%; transform: translateY(-50%);
+  color: var(--gray-400); pointer-events: none;
+}
+.search-input {
+  width: 100%; padding: 9px 12px 9px 38px;
+  border: 1.5px solid var(--gray-200); border-radius: var(--radius);
+  font-size: 13.5px; font-family: 'DM Sans', sans-serif;
+  background: var(--white); color: var(--gray-900);
+  outline: none; transition: border-color 0.15s;
+}
+.search-input:focus { border-color: var(--green-mid); }
+.search-input::placeholder { color: var(--gray-400); }
+
+.btn-new {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 18px; border-radius: var(--radius);
+  background: var(--green-dark); color: var(--white);
+  border: none; cursor: pointer;
+  font-size: 13.5px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif;
+  transition: background 0.15s; white-space: nowrap;
+}
+.btn-new:hover { background: var(--green-mid); }
+.btn-new svg { flex-shrink: 0; }
+
+/* ── STATS ROW ── */
+.stats-row {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 12px; margin-bottom: 20px;
+}
+.stat-card {
+  background: var(--white); border-radius: var(--radius);
+  padding: 16px 18px; box-shadow: var(--shadow-sm);
+  border-left: 3px solid transparent;
+}
+.stat-card.open { border-left-color: var(--amber); }
+.stat-card.closed { border-left-color: var(--green-mid); }
+.stat-card.critical { border-left-color: var(--red); }
+.stat-card.total { border-left-color: var(--blue); }
+.stat-num {
+  font-size: 28px; font-weight: 700;
+  font-family: 'DM Mono', monospace; line-height: 1;
+  margin-bottom: 4px;
+}
+.stat-num.open { color: var(--amber); }
+.stat-num.closed { color: var(--green-mid); }
+.stat-num.critical { color: var(--red); }
+.stat-num.total { color: var(--blue); }
+.stat-label { font-size: 12px; color: var(--gray-600); font-weight: 500; }
+
+/* ── TABLE ── */
+.table-wrap {
+  background: var(--white); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); overflow: hidden;
+  border: 1px solid var(--gray-200);
+}
+.table-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--gray-200);
+  background: var(--gray-100);
+}
+.table-title {
+  font-size: 13px; font-weight: 600; color: var(--gray-700);
+}
+.row-count {
+  font-size: 12px; color: var(--gray-500);
+  font-family: 'DM Mono', monospace;
+}
+table {
+  width: 100%; border-collapse: collapse;
+}
+thead th {
+  padding: 10px 14px; text-align: left;
+  font-size: 11px; font-weight: 600;
+  color: var(--gray-500); letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background: var(--gray-100);
+  border-bottom: 1px solid var(--gray-200);
+  white-space: nowrap; cursor: pointer; user-select: none;
+}
+thead th:hover { color: var(--green-dark); }
+tbody tr {
+  border-bottom: 1px solid var(--gray-100);
+  transition: background 0.1s;
+  cursor: pointer;
+}
+tbody tr:hover { background: var(--green-pale); }
+tbody tr:last-child { border-bottom: none; }
+td {
+  padding: 11px 14px; vertical-align: middle;
+  font-size: 13px; color: var(--gray-800);
+}
+.td-no {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px; color: var(--gray-500);
+  white-space: nowrap;
+}
+.td-desc {
+  max-width: 320px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.td-dept {
+  white-space: nowrap;
+  font-size: 12px; font-weight: 500; color: var(--gray-700);
+}
+.td-person {
+  font-size: 12px; color: var(--gray-600); white-space: nowrap;
+  max-width: 130px; overflow: hidden; text-overflow: ellipsis;
+}
+.td-date {
+  font-family: 'DM Mono', monospace; font-size: 11.5px;
+  color: var(--gray-500); white-space: nowrap;
+}
+
+/* Risk badge */
+.risk-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 28px; height: 28px; border-radius: 6px;
+  font-size: 12px; font-weight: 700; font-family: 'DM Mono', monospace;
+}
+.risk-1, .risk-2, .risk-3 { background: var(--green-pale); color: #166534; }
+.risk-4, .risk-5, .risk-6 { background: var(--blue-pale); color: var(--blue); }
+.risk-8, .risk-9 { background: var(--amber-pale); color: #92400E; }
+.risk-10, .risk-12, .risk-15 { background: #FED7AA; color: #9A3412; }
+.risk-16, .risk-20, .risk-25 { background: var(--red-pale); color: var(--red); }
+
+/* Status badge */
+.status-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 3px 10px; border-radius: 20px;
+  font-size: 11.5px; font-weight: 600; white-space: nowrap;
+}
+.status-open { background: var(--amber-pale); color: #92400E; }
+.status-closed { background: var(--green-pale); color: #166534; }
+.status-dot { width: 5px; height: 5px; border-radius: 50%; }
+.status-open .status-dot { background: var(--amber); }
+.status-closed .status-dot { background: var(--green-mid); }
+
+/* ── ACTION BUTTONS ── */
+.action-btns {
+  display: flex; gap: 4px; opacity: 0;
+  transition: opacity 0.1s;
+}
+tbody tr:hover .action-btns { opacity: 1; }
+.action-btn {
+  width: 26px; height: 26px; border-radius: 5px;
+  border: 1px solid var(--gray-200); background: var(--white);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+}
+.action-btn:hover { border-color: var(--green-mid); background: var(--green-pale); }
+.action-btn svg { color: var(--gray-500); }
+.action-btn:hover svg { color: var(--green-dark); }
+.action-btn.close-btn:hover { border-color: var(--green-mid); background: var(--green-pale); }
+.action-btn.close-btn:hover svg { color: var(--green-dark); }
+
+/* Dept chip */
+.dept-chip {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 11px; font-weight: 600; letter-spacing: 0.3px;
+  background: var(--gray-100); color: var(--gray-700);
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.4); backdrop-filter: blur(4px);
+  z-index: 200; display: none; align-items: center; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal {
+  background: var(--white); border-radius: 14px;
+  box-shadow: var(--shadow-lg);
+  width: 680px; max-width: 95vw;
+  max-height: 90vh; overflow-y: auto;
+  animation: modalIn 0.2s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.92) translateY(8px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+.modal-head {
+  padding: 22px 24px 18px;
+  border-bottom: 1px solid var(--gray-200);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.modal-head-title {
+  font-size: 16px; font-weight: 700; color: var(--gray-900);
+}
+.modal-head-sub {
+  font-size: 12px; color: var(--gray-500); margin-top: 2px;
+}
+.modal-close {
+  width: 32px; height: 32px; border-radius: 8px;
+  border: 1px solid var(--gray-200); background: var(--white);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: all 0.12s;
+}
+.modal-close:hover { background: var(--red-pale); border-color: var(--red); }
+.modal-close:hover svg { color: var(--red); }
+.modal-body { padding: 22px 24px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-full { grid-column: 1 / -1; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-label {
+  font-size: 11.5px; font-weight: 600; color: var(--gray-600);
+  letter-spacing: 0.3px; text-transform: uppercase;
+}
+.form-input, .form-select, .form-textarea {
+  padding: 9px 12px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--gray-200);
+  font-size: 13.5px; font-family: 'DM Sans', sans-serif;
+  color: var(--gray-900); outline: none;
+  transition: border-color 0.15s; width: 100%;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--green-mid);
+}
+.form-textarea { resize: vertical; min-height: 80px; }
+.form-select { cursor: pointer; }
+
+/* Risk matrix inputs */
+.risk-row {
+  display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px;
+}
+.risk-calc {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border-radius: var(--radius-sm);
+  background: var(--gray-100); border: 1.5px solid var(--gray-200);
+  font-size: 13.5px; color: var(--gray-700); font-weight: 600;
+}
+.risk-calc .risk-val {
+  font-family: 'DM Mono', monospace; font-size: 18px;
+  font-weight: 700; color: var(--green-dark);
+}
+
+.modal-foot {
+  padding: 16px 24px;
+  border-top: 1px solid var(--gray-200);
+  display: flex; gap: 10px; justify-content: flex-end;
+}
+.btn {
+  padding: 9px 20px; border-radius: var(--radius);
+  font-size: 13.5px; font-weight: 600;
+  font-family: 'DM Sans', sans-serif; cursor: pointer;
+  border: 1.5px solid transparent; transition: all 0.15s;
+}
+.btn-outline {
+  background: var(--white); color: var(--gray-700);
+  border-color: var(--gray-200);
+}
+.btn-outline:hover { border-color: var(--gray-400); }
+.btn-primary {
+  background: var(--green-dark); color: var(--white);
+  border-color: var(--green-dark);
+}
+.btn-primary:hover { background: var(--green-mid); }
+.btn-danger {
+  background: var(--red-pale); color: var(--red);
+  border-color: #FECACA;
+}
+.btn-danger:hover { background: #FEE2E2; }
+
+/* ── DETAIL MODAL ── */
+.detail-section {
+  margin-bottom: 20px;
+}
+.detail-section-title {
+  font-size: 11px; font-weight: 600; color: var(--gray-400);
+  letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 10px;
+  padding-bottom: 6px; border-bottom: 1px solid var(--gray-200);
+}
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.detail-item { }
+.detail-key { font-size: 11px; color: var(--gray-400); font-weight: 500; margin-bottom: 2px; }
+.detail-val { font-size: 13.5px; color: var(--gray-900); font-weight: 500; }
+.detail-full { grid-column: 1/-1; }
+.detail-val-desc {
+  font-size: 13px; color: var(--gray-700); line-height: 1.6;
+  padding: 10px 12px; background: var(--gray-100); border-radius: var(--radius-sm);
+}
+
+/* ── CLOSE MODAL ── */
+.close-form { }
+
+/* ── EMPTY ── */
+.empty {
+  text-align: center; padding: 60px 20px;
+  color: var(--gray-400);
+}
+.empty-icon { font-size: 40px; margin-bottom: 12px; }
+.empty-text { font-size: 14px; font-weight: 500; }
+
+/* ── PAGINATION ── */
+.pagination {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 18px; border-top: 1px solid var(--gray-200);
+  background: var(--gray-100);
+}
+.page-info { font-size: 12px; color: var(--gray-500); }
+.page-btns { display: flex; gap: 6px; }
+.page-btn {
+  padding: 5px 12px; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--gray-200); background: var(--white);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  color: var(--gray-700); transition: all 0.12s;
+}
+.page-btn:hover:not(:disabled) { border-color: var(--green-mid); color: var(--green-dark); }
+.page-btn:disabled { opacity: 0.4; cursor: default; }
+.page-btn.active { background: var(--green-dark); color: var(--white); border-color: var(--green-dark); }
+
+/* ── NOTIFICATION ── */
+.notif {
+  position: fixed; bottom: 24px; right: 24px;
+  background: var(--gray-900); color: var(--white);
+  padding: 12px 20px; border-radius: 10px;
+  font-size: 13px; font-weight: 500;
+  box-shadow: var(--shadow-lg);
+  display: flex; align-items: center; gap: 8px;
+  z-index: 999; opacity: 0; pointer-events: none;
+  transform: translateY(8px);
+  transition: all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+}
+.notif.show { opacity: 1; pointer-events: auto; transform: translateY(0); }
+.notif.success { background: var(--green-dark); }
+.notif.error { background: var(--red); }
+
+/* responsive */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .stats-row { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .stats-row { grid-template-columns: 1fr 1fr; }
+  .main { padding: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-brand">
+    <div class="brand-logo">NNG</div>
+    <div>
+      <div class="brand-title">NNG Energy</div>
+      <div class="brand-sub">İSG Aksiyon Takip Sistemi</div>
+    </div>
+  </div>
+  <div class="topbar-pills">
+    <span class="tpill tpill-open"><span class="dot dot-amber"></span><span id="pill-open">0 Açık</span></span>
+    <span class="tpill tpill-closed"><span class="dot dot-green"></span><span id="pill-closed">0 Kapalı</span></span>
+    <span class="tpill tpill-total"><span id="pill-total">0 Toplam</span></span>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Durum</div>
+      <button class="filter-btn active" onclick="setFilter('status','all')" id="fb-all">
+        Tümü <span class="filter-count" id="fc-all">0</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('status','Açık')" id="fb-open">
+        Açık <span class="filter-count" id="fc-open">0</span>
+      </button>
+      <button class="filter-btn" onclick="setFilter('status','Kapalı')" id="fb-closed">
+        Kapalı <span class="filter-count" id="fc-closed">0</span>
+      </button>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Bölüm</div>
+      <div id="dept-filters"></div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Risk Seviyesi</div>
+      <div id="risk-filters"></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-wrap">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" id="search-input" type="text" placeholder="Uygunsuzluk ara (açıklama, numara, bölüm)…" oninput="renderTable()">
+      </div>
+      <button class="btn-new" onclick="openModal('add')">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Yeni Kayıt
+      </button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+      <div class="stat-card open">
+        <div class="stat-num open" id="s-open">0</div>
+        <div class="stat-label">Açık Aksiyonlar</div>
+      </div>
+      <div class="stat-card closed">
+        <div class="stat-num closed" id="s-closed">0</div>
+        <div class="stat-label">Kapatılan Aksiyonlar</div>
+      </div>
+      <div class="stat-card critical">
+        <div class="stat-num critical" id="s-critical">0</div>
+        <div class="stat-label">Yüksek Risk (≥16)</div>
+      </div>
+      <div class="stat-card total">
+        <div class="stat-num total" id="s-total">0</div>
+        <div class="stat-label">Toplam Kayıt</div>
+      </div>
+    </div>
+
+    <!-- Table -->
+    <div class="table-wrap">
+      <div class="table-header">
+        <div class="table-title">Uygunsuzluk Listesi</div>
+        <div class="row-count" id="row-count">0 kayıt</div>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortBy('no')">NO ↕</th>
+              <th onclick="sortBy('date')">TARİH ↕</th>
+              <th>UYGUNSUZLUK</th>
+              <th onclick="sortBy('dept')">BÖLÜM ↕</th>
+              <th>SORUMLU</th>
+              <th onclick="sortBy('risk')">RİSK ↕</th>
+              <th onclick="sortBy('status')">DURUM ↕</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="table-body"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="page-info" id="page-info"></div>
+        <div class="page-btns" id="page-btns"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="modal-add">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-head-title" id="modal-title">Yeni Uygunsuzluk Kaydı</div>
+        <div class="modal-head-sub">Tüm alanları eksiksiz doldurunuz</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('add')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group">
+          <label class="form-label">Uygunsuzluk No</label>
+          <input class="form-input" id="f-no" placeholder="örn. 2026-210">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tespit Tarihi</label>
+          <input class="form-input" id="f-date" type="date">
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">Uygunsuzluk Açıklaması</label>
+          <textarea class="form-textarea" id="f-desc" placeholder="Uygunsuzluğu detaylı olarak açıklayınız…" rows="3"></textarea>
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">Tehlike</label>
+          <input class="form-input" id="f-hazard" placeholder="Oluşabilecek tehlike…">
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">Aksiyon Önerisi</label>
+          <textarea class="form-textarea" id="f-action" placeholder="Alınması gereken aksiyon…" rows="2"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Bölüm</label>
+          <select class="form-select" id="f-dept">
+            <option value="">Seçiniz</option>
+            <option>MEKANİK</option>
+            <option>ELEKTRİK</option>
+            <option>KAYNAK</option>
+            <option>BOYA</option>
+            <option>İSG</option>
+            <option>ÇEVRE</option>
+            <option>İDARİ İŞLER</option>
+            <option>SATIN ALMA</option>
+            <option>YANGИН</option>
+            <option>MEKANİK- ELEKTRİK</option>
+            <option>ELEKTRİK- MEKANİK</option>
+            <option>ELEKTRİK- KAYNAK</option>
+            <option>Diğer</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Sorumlu Kişi</label>
+          <input class="form-input" id="f-person" placeholder="Ad Soyad">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Aksiyon Türü</label>
+          <select class="form-select" id="f-type">
+            <option>Tehlike Bildirimi</option>
+            <option>Dış Denetim</option>
+            <option>İç Denetim</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tespit Eden</label>
+          <input class="form-input" id="f-finder" placeholder="örn. Onur Niyazi DENİZ">
+        </div>
+        <div class="form-group form-full">
+          <label class="form-label">Risk Matrisi</label>
+          <div class="risk-row">
+            <div class="form-group">
+              <label class="form-label" style="font-size:10px">Olasılık (1-5)</label>
+              <select class="form-select" id="f-prob" onchange="calcRisk()">
+                <option value="">-</option>
+                <option value="1">1 - Çok Küçük</option>
+                <option value="2">2 - Küçük</option>
+                <option value="3">3 - Orta</option>
+                <option value="4">4 - Yüksek</option>
+                <option value="5">5 - Çok Yüksek</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-size:10px">Şiddet (1-5)</label>
+              <select class="form-select" id="f-sev" onchange="calcRisk()">
+                <option value="">-</option>
+                <option value="1">1 - Çok Hafif</option>
+                <option value="2">2 - Hafif</option>
+                <option value="3">3 - Orta</option>
+                <option value="4">4 - Ciddi</option>
+                <option value="5">5 - Çok Ciddi</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" style="font-size:10px">Risk Skoru</label>
+              <div class="risk-calc"><span class="risk-val" id="f-risk-val">—</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('add')">İptal</button>
+      <button class="btn btn-primary" onclick="saveRecord()">Kaydet</button>
+    </div>
+  </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="modal-detail">
+  <div class="modal">
+    <div class="modal-head">
+      <div>
+        <div class="modal-head-title" id="detail-no">—</div>
+        <div class="modal-head-sub" id="detail-date">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('detail')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body" id="detail-body"></div>
+    <div class="modal-foot" id="detail-foot"></div>
+  </div>
+</div>
+
+<!-- CLOSE MODAL -->
+<div class="modal-overlay" id="modal-close">
+  <div class="modal" style="max-width:440px">
+    <div class="modal-head">
+      <div>
+        <div class="modal-head-title">Aksiyonu Kapat</div>
+        <div class="modal-head-sub" id="close-no-label">—</div>
+      </div>
+      <button class="modal-close" onclick="closeModal('close')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group" style="margin-bottom:14px">
+        <label class="form-label">Aksiyon Açıklaması</label>
+        <textarea class="form-textarea" id="close-desc" placeholder="Yapılan aksiyonu açıklayınız…" rows="4"></textarea>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Kapanış Tarihi</label>
+        <input class="form-input" id="close-date" type="date">
+      </div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-outline" onclick="closeModal('close')">İptal</button>
+      <button class="btn btn-primary" onclick="confirmClose()">Kapat ✓</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<script>
+// ── DATA ──
+const STORAGE_KEY = 'nng_isg_records';
+let records = [];
+let filtered = [];
+let sortKey = 'date';
+let sortDir = -1;
+let currentPage = 1;
+const PAGE_SIZE = 20;
+let activeFilter = { status: 'all', dept: null, riskGroup: null };
+let editingId = null;
+let closingId = null;
+
+function genId() { return Date.now() + Math.random().toString(36).slice(2,6); }
+function today() { return new Date().toISOString().slice(0,10); }
+
+function fmt(d) {
+  if(!d) return '—';
+  if(typeof d === 'number') {
+    const baseDate = new Date(1899, 11, 30);
+    const result = new Date(baseDate.getTime() + d * 86400000);
+    return result.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  }
+  if(d.includes('-') && d.length===10) {
+    const [y,m,dd] = d.split('-');
+    return `${dd}.${m}.${y}`;
+  }
+  return d;
+}
+
+function riskLevel(r) {
+  const n = parseInt(r)||0;
+  if(n >= 16) return 'critical';
+  if(n >= 10) return 'high';
+  if(n >= 5) return 'medium';
+  return 'low';
+}
+
+function riskClass(r) {
+  const n = parseInt(r)||0;
+  if(n >= 16) return `risk-${n <= 20 ? '16' : '25'}`;
+  if(n >= 10) return `risk-${n === 10 ? '10' : n === 12 ? '12' : '15'}`;
+  if(n >= 8) return `risk-${n === 8 ? '8' : '9'}`;
+  if(n >= 4) return `risk-${n <= 6 ? '4' : '6'}`;
+  return 'risk-1';
+}
+
+function statusNorm(s) {
+  if(!s) return 'Açık';
+  const str = String(s).trim();
+  if(str.toLowerCase().includes('kapal')) return 'Kapalı';
+  return 'Açık';
+}
+
+// ── SEED DATA ──
+function seedData() {
+  const raw = [
+    {no:'2026-209',date:'46170',desc:'Kaynak atölyesinden yukarı çıkış merdiveninin ışığının yükseklikten kaynaklı algılanmadığı gözlemlenmiştir',hazard:'Yetersiz aydınlatmadan kaynaklı düşme sonucu yaralanmalar',action:'Aydınlatmanın tamir edilmesi sensörün algılayabilecek bir alana getirilmesi',dept:'ELEKTRİK',person:'ONUR TOPAL',prob:4,sev:3,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-208',date:'46170',desc:'Yük asansörü yanında yapılan boya çalışmasının belirli periyodlar ile yapıldığı ve çalışma esnasında oluşan gazlardan diğer çalışan personellerin de maruz kaldığı gözlemlenmiştir',hazard:'Maruziyetten kaynaklı oluşan meslek hastalıkları',action:'Boya için uygun bir alan yapılmalı, malzeme boya atölyesine taşınmalı',dept:'BOYA',person:'ALPEREN KARANİ',prob:3,sev:4,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-207',date:'46169',desc:'Elektrik atölyesi kısmında palet üzerinde bazı malzemelerin paletten taştığı gözlemlenmiştir',hazard:'Çarpma sonucu bilet ayak yaralanmaları kesilmeleri',action:'Malzemelerin daha uygun taşmayacak şekilde istiflenmesi',dept:'ELEKTRİK',person:'ONUR TOPAL',prob:2,sev:3,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-206',date:'46168',desc:'Mekanik aşağı iniş merdivenin yanında bulunan yangın dolabının önünde malzemeler bulunduğu tespit edilmiştir',hazard:'Müdahale esnasında takılma sonucu yaralanma, müdahalenin gecikmesi',action:'Dolap önü ve yanlarının açık olması, malzemelerin kaldırılması',dept:'MEKANİK',person:'BATUHAN SANCAK',prob:3,sev:3,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-205',date:'46167',desc:'Boya atölyesinde bulunan yangın dolabı önünde malzemeler bulunduğu dolaba erişim sağlanamadığı tespit edilmiştir',hazard:'Acil durum esnasında müdahalenin gecikmesi',action:'Malzemelerin tüp ve dolap önünden alınması gerekmektedir',dept:'BOYA',person:'ALPEREN KARANİ',prob:3,sev:3,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-204',date:'46136',desc:'Mekanik ve Elektrik atölyesinde kullanımda olan 4 kollu zincir sapanın zincir katlama pimlerinde sorun olduğu tespit edilmiştir',hazard:'Zincirin kurtulması sonucu yük sarsılması, sıkışma yaralanma',action:'Onarımının yapılması gerekmektedir',dept:'MEKANİK- ELEKTRİK',person:'SERHAT UĞUR-AHMET YİĞİT GÜLDÜREN',prob:3,sev:4,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-76',date:'46049',desc:'Yangın pompa dairesine giriş, çıkış, malzeme transferi yapılırken kapak açıldığında alan boşluğu oluşmaktadır',hazard:'Düşme tehlikesi yaratmaktadır',action:'Demonte aparatlarla toplu koruma önlemleri alınmalıdır',dept:'KAYNAK',person:'ALPEREN KARANİ',prob:4,sev:5,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-129',date:'46086',desc:'Mekanik atölyesinde kurulu bulunan balans makinesinin enerji besleme hattında 300 mA kaçak akım rolesi kullanıldığı tespit edilmiştir',hazard:'300 mA kaçak akım rolesinin açma eşiği yüksek olduğundan personellere elektrik çarpma riski bulunmaktadır',action:'Personel güvenliğini sağlamak için 30 mA kaçak akım rolesi kullanılmalıdır',dept:'ELEKTRİK',person:'ONUR TOPAL',prob:3,sev:5,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    // KAPALI ÖRNEKLER
+    {no:'2026-47',date:'46038',desc:'Trafonun olduğu yan cephenin kenarında bulunan ızgaraların deforme olduğu içeri doğru büküldüğü tespit edilmiştir',hazard:'Takılma ve düşme riski oluşturmaktadır',action:'Deformeli ızgaranın onarımı yada yenilenmesi',dept:'KAYNAK',person:'ONUR NİYAZİ DENİZ - ALPEREN KARANİ',prob:3,sev:3,status:'Kapalı',actionDesc:'Izgaralar düzeltilip duba dizilmiştir',closeDate:'46170',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-203',date:'46135',desc:'Mekanik atölyesi yürüyüş yolu üzerinde malzemeler olduğu ve kapıların yürüyüş yoluna denk geldiği tespit edilmiştir',hazard:'Tahliye esnasında malzemelere çarpma sonucu yaralanmalar ve tahliyenin gecikmesi',action:'Malzemelerin daha uygun bir alana taşınması',dept:'MEKANİK',person:'SERHAT UĞUR',prob:3,sev:4,status:'Kapalı',actionDesc:'Malzemeler alınmıştır',closeDate:'46169',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-174',date:'46120',desc:'Mekanik atölyesinde kullanılmakta olan 5 tonluk sapanın deforme olduğu tespit edilmiştir',hazard:'Malzeme düşme, sapan yırtılma sonucu yaralanmalar',action:'Sapan kullanım dışı bırakılmalı, sahadan derhal çıkarılmalıdır',dept:'MEKANİK',person:'AHMET KAMİL TOMBAK',prob:4,sev:5,status:'Kapalı',actionDesc:'Personeller bilgilendirilmiş olup ayrılmıştır',closeDate:'46129',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-121',date:'46079',desc:'Mekanik ve elektrik bölümlerinde kullanılan kaldırma ekipmanlarına ait mapanın yamulduğu tespit edilmiştir',hazard:'Mapa kilidinin yamulmadan kaynaklı tam kapanmaması sonucu malzeme düşme riskinden kaynaklı yaralanmalar',action:'Deforme olmuş mapanın kullanımdan kaldırılması',dept:'MEKANİK- ELEKTRİK',person:'AHMET KAMİL TOMBAK - ONUR TOPAL',prob:4,sev:5,status:'Kapalı',actionDesc:'Personeller konu hakkında bilgilendirilmiştir, mapa atık sahasına atılmıştır',closeDate:'46129',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-188',date:'46128',desc:'Tesis geneli bütün hidrantlardan su gelmediği gözlemlenmiştir',hazard:'Olası bir yangın durumunda söndürme ekipmanlarının çalışmamasından dolayı yangının büyümesi',action:'Hidrant hattının kontrol edilmesi',dept:'İSG',person:'DİLAN ÇELİK',prob:3,sev:5,status:'Kapalı',actionDesc:'Acil durum butonuna basıldığı tespit edilmiş olup elektrik birimi yardımı ile aktif hale getirilmiştir',closeDate:'46134',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-145',date:'46104',desc:'Kaynak atölyesi tarafından kullanımda olan manyetik matkabın elektrik kablosunda hasar olduğu tespit edilmiştir',hazard:'Hasarlı kablo nedeni ile elektrik kaçağı, kısa devre ve elektrik çarpması',action:'Yetkili elektrik birimi tarafından onarımının yapılması',dept:'ELEKTRİK- KAYNAK',person:'ONUR TOPAL- ALPEREN KARANİ',prob:4,sev:5,status:'Kapalı',actionDesc:'Elektrik atölyesi tarafından onarılmıştır',closeDate:'46116',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-25',date:'46031',desc:'Atıkların geçici olarak depolanabileceği tanımlı bir atık sahanın olması gerekmektedir',hazard:'Atıkların karışması durumunda geri dönüşüm ve bertarafın aksaması',action:'Atık sahasının yapılması',dept:'ÇEVRE',person:'ONUR NİYAZİ DENİZ',prob:3,sev:4,status:'Kapalı',actionDesc:'Atık saha yapımı bitmiştir',closeDate:'46128',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2026-1',date:'46029',desc:'Sahada olan seyyar merdivenin tekerlerinden birinin zemine temas etmediği tespit edilmiştir',hazard:'Devrilme ve düşme sonucu yaralanma',action:'Kullanılmamalı ve tamiri yapılmalıdır',dept:'MEKANİK ELEKTRİK',person:'AHMET KAMİL TOMBAK-ONUR TOPAL',prob:3,sev:3,status:'Kapalı',actionDesc:'Onarım yapılmış olup aksiyon alınmıştır',closeDate:'46077',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+    {no:'2025-4',date:'45978',desc:'Düzensiz şekilde istiflenen profil malzemelerinin düşme tehlikesi bulunmaktadır',hazard:'Yüksekten malzeme düşmesi',action:'Stopper yapılabilir veya profillerin düzenli bir şekilde konumlandırılması sağlanır',dept:'KAYNAK',person:'SERHAT UĞUR',prob:2,sev:5,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK'},
+  ];
+  return raw.map(r => ({
+    id: genId(),
+    no: r.no,
+    date: r.date,
+    desc: r.desc,
+    hazard: r.hazard,
+    action: r.action,
+    dept: r.dept,
+    person: r.person,
+    prob: r.prob,
+    sev: r.sev,
+    risk: r.prob * r.sev,
+    status: r.status,
+    actionDesc: r.actionDesc,
+    closeDate: r.closeDate,
+    type: r.type,
+    finder: r.finder,
+  }));
+}
+
+function loadData() {
+  try {
+    const d = localStorage.getItem(STORAGE_KEY);
+    if(d) { records = JSON.parse(d); }
+    else { records = seedData(); saveData(); }
+  } catch(e) { records = seedData(); saveData(); }
+}
+
+function saveData() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(records)); } catch(e) {}
+}
+
+// ── FILTERS ──
+function setFilter(key, val) {
+  activeFilter[key] = val;
+  currentPage = 1;
+  if(key === 'status') {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    if(val === 'all') document.getElementById('fb-all').classList.add('active');
+    else if(val === 'Açık') document.getElementById('fb-open').classList.add('active');
+    else if(val === 'Kapalı') document.getElementById('fb-closed').classList.add('active');
+  }
+  if(key === 'dept') {
+    document.querySelectorAll('.dept-filter-btn').forEach(b => b.classList.remove('active'));
+    if(val) document.getElementById('deptf-'+val)?.classList.add('active');
+  }
+  if(key === 'riskGroup') {
+    document.querySelectorAll('.risk-filter-item').forEach(b => b.classList.remove('active'));
+    if(val) document.getElementById('riskf-'+val)?.classList.add('active');
+  }
+  renderTable();
+}
+
+function buildSidebarFilters() {
+  // Dept
+  const depts = [...new Set(records.map(r => r.dept?.split(/[,\/]/)[0].trim()).filter(Boolean))];
+  const deptDiv = document.getElementById('dept-filters');
+  let html = '<button class="filter-btn active" id="deptf-all" onclick="setFilter(\'dept\',null)">Tümü <span class="filter-count">'+records.length+'</span></button>';
+  depts.sort().forEach(d => {
+    const cnt = records.filter(r => r.dept?.includes(d)).length;
+    html += `<button class="filter-btn dept-filter-btn" id="deptf-${d}" onclick="setFilter('dept','${d}')">${d} <span class="filter-count">${cnt}</span></button>`;
+  });
+  deptDiv.innerHTML = html;
+
+  // Risk
+  const riskDiv = document.getElementById('risk-filters');
+  const groups = [
+    {id:'önemsiz',label:'Önemsiz (1-4)',color:'#166534',min:1,max:4},
+    {id:'kontrol',label:'Kontrol Gerekli (5-9)',color:'#1D4ED8',min:5,max:9},
+    {id:'düzeltici',label:'Düzeltici Faaliyet (10-15)',color:'#92400E',min:10,max:15},
+    {id:'kritik',label:'Kritik (16+)',color:'#DC2626',min:16,max:999},
+  ];
+  riskDiv.innerHTML = groups.map(g => {
+    const cnt = records.filter(r => r.risk >= g.min && r.risk <= g.max).length;
+    return `<div class="risk-item" id="riskf-${g.id}" onclick="setFilter('riskGroup','${g.id}')">
+      <span class="risk-dot" style="background:${g.color}"></span>
+      <span style="flex:1;font-size:12px">${g.label}</span>
+      <span class="filter-count">${cnt}</span>
+    </div>`;
+  }).join('');
+}
+
+// ── RENDER ──
+function getFiltered() {
+  const q = document.getElementById('search-input').value.toLowerCase();
+  let f = records.filter(r => {
+    if(activeFilter.status !== 'all' && statusNorm(r.status) !== activeFilter.status) return false;
+    if(activeFilter.dept && !r.dept?.includes(activeFilter.dept)) return false;
+    if(activeFilter.riskGroup) {
+      const grps = {
+        'önemsiz':[1,4], 'kontrol':[5,9], 'düzeltici':[10,15], 'kritik':[16,999]
+      };
+      const [mn,mx] = grps[activeFilter.riskGroup]||[0,999];
+      if(r.risk < mn || r.risk > mx) return false;
+    }
+    if(q) {
+      return r.desc?.toLowerCase().includes(q) ||
+             r.no?.toLowerCase().includes(q) ||
+             r.dept?.toLowerCase().includes(q) ||
+             r.person?.toLowerCase().includes(q);
+    }
+    return true;
+  });
+  // sort
+  f.sort((a,b) => {
+    let av = a[sortKey], bv = b[sortKey];
+    if(sortKey === 'risk') { av = parseInt(av)||0; bv = parseInt(bv)||0; }
+    if(sortKey === 'date') { av = String(av); bv = String(bv); }
+    if(av < bv) return -1 * sortDir;
+    if(av > bv) return 1 * sortDir;
+    return 0;
+  });
+  return f;
+}
+
+function sortBy(key) {
+  if(sortKey === key) sortDir *= -1;
+  else { sortKey = key; sortDir = -1; }
+  renderTable();
+}
+
+function renderStats() {
+  const open = records.filter(r => statusNorm(r.status) === 'Açık').length;
+  const closed = records.filter(r => statusNorm(r.status) === 'Kapalı').length;
+  const critical = records.filter(r => r.risk >= 16).length;
+  const total = records.length;
+  document.getElementById('s-open').textContent = open;
+  document.getElementById('s-closed').textContent = closed;
+  document.getElementById('s-critical').textContent = critical;
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('pill-open').textContent = open + ' Açık';
+  document.getElementById('pill-closed').textContent = closed + ' Kapalı';
+  document.getElementById('pill-total').textContent = total + ' Toplam';
+
+  document.getElementById('fc-all').textContent = total;
+  document.getElementById('fc-open').textContent = open;
+  document.getElementById('fc-closed').textContent = closed;
+}
+
+function renderTable() {
+  filtered = getFiltered();
+  const total = filtered.length;
+  const pages = Math.ceil(total / PAGE_SIZE);
+  if(currentPage > pages && pages > 0) currentPage = pages;
+  const start = (currentPage-1)*PAGE_SIZE;
+  const slice = filtered.slice(start, start+PAGE_SIZE);
+
+  document.getElementById('row-count').textContent = total + ' kayıt';
+
+  const tbody = document.getElementById('table-body');
+  if(!slice.length) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Kayıt bulunamadı</div></div></td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = slice.map(r => {
+    const st = statusNorm(r.status);
+    const stClass = st === 'Kapalı' ? 'status-closed' : 'status-open';
+    const rc = riskClass(r.risk);
+    return `<tr onclick="openDetail('${r.id}')">
+      <td class="td-no">${r.no||'—'}</td>
+      <td class="td-date">${fmt(r.date)}</td>
+      <td class="td-desc" title="${(r.desc||'').replace(/"/g,"'")}"><span>${r.desc||'—'}</span></td>
+      <td class="td-dept"><span class="dept-chip">${(r.dept||'—').split(/[-–]/)[0].trim()}</span></td>
+      <td class="td-person">${r.person||'—'}</td>
+      <td><span class="risk-badge ${rc}">${r.risk||'—'}</span></td>
+      <td><span class="status-badge ${stClass}"><span class="status-dot"></span>${st}</span></td>
+      <td onclick="event.stopPropagation()">
+        <div class="action-btns">
+          <button class="action-btn" title="Düzenle" onclick="openEdit('${r.id}')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          ${st === 'Açık' ? `<button class="action-btn close-btn" title="Aksiyonu Kapat" onclick="openClose('${r.id}')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+          </button>` : ''}
+          <button class="action-btn" title="Sil" onclick="deleteRecord('${r.id}')">
+            <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // pagination
+  document.getElementById('page-info').textContent = `${start+1}–${Math.min(start+PAGE_SIZE,total)} / ${total}`;
+  let pgHtml = `<button class="page-btn" onclick="changePage(${currentPage-1})" ${currentPage<=1?'disabled':''}>‹</button>`;
+  for(let i=1;i<=pages;i++) {
+    if(pages<=7 || Math.abs(i-currentPage)<=2 || i===1 || i===pages) {
+      pgHtml += `<button class="page-btn${i===currentPage?' active':''}" onclick="changePage(${i})">${i}</button>`;
+    } else if(Math.abs(i-currentPage)===3) pgHtml += '<span style="padding:0 4px;color:var(--gray-400)">…</span>';
+  }
+  pgHtml += `<button class="page-btn" onclick="changePage(${currentPage+1})" ${currentPage>=pages?'disabled':''}>›</button>`;
+  document.getElementById('page-btns').innerHTML = pgHtml;
+}
+
+function changePage(p) {
+  const pages = Math.ceil(filtered.length / PAGE_SIZE);
+  if(p < 1 || p > pages) return;
+  currentPage = p;
+  renderTable();
+}
+
+// ── MODAL ──
+function openModal(id) {
+  document.getElementById('modal-'+id).classList.add('open');
+}
+function closeModal(id) {
+  document.getElementById('modal-'+id).classList.remove('open');
+  if(id === 'add') { clearForm(); editingId = null; }
+  if(id === 'close') { closingId = null; }
+}
+
+function clearForm() {
+  ['f-no','f-date','f-desc','f-hazard','f-action','f-dept','f-person','f-type','f-finder','f-prob','f-sev'].forEach(id => {
+    const el = document.getElementById(id);
+    if(el) el.value = '';
+  });
+  document.getElementById('f-risk-val').textContent = '—';
+  document.getElementById('modal-title').textContent = 'Yeni Uygunsuzluk Kaydı';
+}
+
+function calcRisk() {
+  const p = parseInt(document.getElementById('f-prob').value)||0;
+  const s = parseInt(document.getElementById('f-sev').value)||0;
+  const r = p * s;
+  const el = document.getElementById('f-risk-val');
+  el.textContent = r || '—';
+  el.style.color = r >= 16 ? 'var(--red)' : r >= 10 ? '#9A3412' : r >= 5 ? 'var(--amber)' : 'var(--green-dark)';
+}
+
+function openEdit(id) {
+  const r = records.find(x => x.id === id);
+  if(!r) return;
+  editingId = id;
+  document.getElementById('modal-title').textContent = 'Kaydı Düzenle';
+  document.getElementById('f-no').value = r.no || '';
+  document.getElementById('f-date').value = (typeof r.date === 'string' && r.date.includes('-')) ? r.date : today();
+  document.getElementById('f-desc').value = r.desc || '';
+  document.getElementById('f-hazard').value = r.hazard || '';
+  document.getElementById('f-action').value = r.action || '';
+  document.getElementById('f-dept').value = r.dept || '';
+  document.getElementById('f-person').value = r.person || '';
+  document.getElementById('f-type').value = r.type || 'Tehlike Bildirimi';
+  document.getElementById('f-finder').value = r.finder || '';
+  document.getElementById('f-prob').value = r.prob || '';
+  document.getElementById('f-sev').value = r.sev || '';
+  calcRisk();
+  openModal('add');
+}
+
+function saveRecord() {
+  const no = document.getElementById('f-no').value.trim();
+  const desc = document.getElementById('f-desc').value.trim();
+  if(!no || !desc) { notify('Uygunsuzluk No ve Açıklama zorunludur','error'); return; }
+  const p = parseInt(document.getElementById('f-prob').value)||0;
+  const s = parseInt(document.getElementById('f-sev').value)||0;
+  const data = {
+    no, desc,
+    date: document.getElementById('f-date').value || today(),
+    hazard: document.getElementById('f-hazard').value.trim(),
+    action: document.getElementById('f-action').value.trim(),
+    dept: document.getElementById('f-dept').value,
+    person: document.getElementById('f-person').value.trim(),
+    type: document.getElementById('f-type').value,
+    finder: document.getElementById('f-finder').value.trim(),
+    prob: p, sev: s, risk: p * s,
+  };
+  if(editingId) {
+    const idx = records.findIndex(r => r.id === editingId);
+    if(idx !== -1) records[idx] = {...records[idx], ...data};
+    notify('Kayıt güncellendi','success');
+  } else {
+    records.unshift({id: genId(), status: 'Açık', actionDesc:'', closeDate:'', ...data});
+    notify('Yeni kayıt eklendi','success');
+  }
+  saveData();
+  buildSidebarFilters();
+  renderStats();
+  renderTable();
+  closeModal('add');
+}
+
+function deleteRecord(id) {
+  if(!confirm('Bu kayıt silinecek. Emin misiniz?')) return;
+  records = records.filter(r => r.id !== id);
+  saveData();
+  buildSidebarFilters();
+  renderStats();
+  renderTable();
+  notify('Kayıt silindi');
+}
+
+// ── DETAIL ──
+function openDetail(id) {
+  const r = records.find(x => x.id === id);
+  if(!r) return;
+  const st = statusNorm(r.status);
+  document.getElementById('detail-no').textContent = r.no || '—';
+  document.getElementById('detail-date').textContent = fmt(r.date) + ' · ' + (r.dept||'') + ' · ' + (r.type||'');
+
+  const stClass = st === 'Kapalı' ? 'status-closed' : 'status-open';
+  const rc = riskClass(r.risk);
+  const riskDesc = r.risk >= 16 ? 'Risk düşürülene kadar iş durdurulmalı' : r.risk >= 10 ? 'Düzeltici faaliyet başlatılmalı' : r.risk >= 5 ? 'Kontrol edilmeli' : 'Önemsiz risk';
+
+  document.getElementById('detail-body').innerHTML = `
+    <div class="detail-section">
+      <div class="detail-section-title">Uygunsuzluk Bilgileri</div>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-key">Uygunsuzluk No</div>
+          <div class="detail-val" style="font-family:'DM Mono',monospace">${r.no||'—'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-key">Tespit Tarihi</div>
+          <div class="detail-val">${fmt(r.date)}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-key">Bölüm</div>
+          <div class="detail-val"><span class="dept-chip">${r.dept||'—'}</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-key">Sorumlu</div>
+          <div class="detail-val">${r.person||'—'}</div>
+        </div>
+        <div class="detail-item detail-full">
+          <div class="detail-key">Uygunsuzluk Açıklaması</div>
+          <div class="detail-val-desc">${r.desc||'—'}</div>
+        </div>
+        <div class="detail-item detail-full">
+          <div class="detail-key">Tehlike</div>
+          <div class="detail-val-desc">${r.hazard||'—'}</div>
+        </div>
+        <div class="detail-item detail-full">
+          <div class="detail-key">Aksiyon Önerisi</div>
+          <div class="detail-val-desc">${r.action||'—'}</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Risk Değerlendirmesi</div>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-key">Olasılık × Şiddet</div>
+          <div class="detail-val">${r.prob||'—'} × ${r.sev||'—'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-key">Risk Skoru</div>
+          <div class="detail-val"><span class="risk-badge ${rc}" style="width:auto;padding:2px 10px">${r.risk||'—'} — ${riskDesc}</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Durum</div>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-key">Aksiyon Durumu</div>
+          <div class="detail-val"><span class="status-badge ${stClass}"><span class="status-dot"></span>${st}</span></div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-key">Kapanış Tarihi</div>
+          <div class="detail-val">${r.closeDate ? fmt(r.closeDate) : '—'}</div>
+        </div>
+        ${r.actionDesc ? `<div class="detail-item detail-full">
+          <div class="detail-key">Aksiyon Açıklaması</div>
+          <div class="detail-val-desc">${r.actionDesc}</div>
+        </div>` : ''}
+      </div>
+    </div>
+
+    <div class="detail-section">
+      <div class="detail-section-title">Kayıt Bilgileri</div>
+      <div class="detail-grid">
+        <div class="detail-item">
+          <div class="detail-key">Aksiyon Türü</div>
+          <div class="detail-val">${r.type||'—'}</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-key">Tespit Eden</div>
+          <div class="detail-val">${r.finder||'—'}</div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('detail-foot').innerHTML = `
+    <button class="btn btn-outline" onclick="closeModal('detail')">Kapat</button>
+    <button class="btn btn-outline" onclick="closeModal('detail');openEdit('${r.id}')">Düzenle</button>
+    ${st === 'Açık' ? `<button class="btn btn-primary" onclick="closeModal('detail');openClose('${r.id}')">✓ Aksiyonu Kapat</button>` : ''}
+  `;
+
+  openModal('detail');
+}
+
+// ── CLOSE ACTION ──
+function openClose(id) {
+  closingId = id;
+  const r = records.find(x => x.id === id);
+  document.getElementById('close-no-label').textContent = r?.no || '';
+  document.getElementById('close-desc').value = '';
+  document.getElementById('close-date').value = today();
+  openModal('close');
+}
+
+function confirmClose() {
+  const desc = document.getElementById('close-desc').value.trim();
+  if(!desc) { notify('Aksiyon açıklaması giriniz','error'); return; }
+  const date = document.getElementById('close-date').value || today();
+  const idx = records.findIndex(r => r.id === closingId);
+  if(idx !== -1) {
+    records[idx].status = 'Kapalı';
+    records[idx].actionDesc = desc;
+    records[idx].closeDate = date;
+  }
+  saveData();
+  buildSidebarFilters();
+  renderStats();
+  renderTable();
+  closeModal('close');
+  notify('Aksiyon kapatıldı ✓', 'success');
+}
+
+// ── NOTIFY ──
+function notify(msg, type='') {
+  const el = document.getElementById('notif');
+  el.textContent = msg;
+  el.className = 'notif show' + (type ? ' '+type : '');
+  setTimeout(() => el.className = 'notif', 3000);
+}
+
+// ── INIT ──
+loadData();
+renderStats();
+buildSidebarFilters();
+renderTable();
+
+// close modals on overlay click
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => {
+    if(e.target === el) {
+      const id = el.id.replace('modal-','');
+      closeModal(id);
+    }
+  });
+});
+</script>
+</body>
+</html>
