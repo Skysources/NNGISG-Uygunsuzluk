@@ -1,0 +1,1385 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>NNG Energy — İSG Aksiyon Takip</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g-dark:#1B6B2E; --g-mid:#2A8C3F; --g-light:#3DAA55;
+  --g-pale:#E8F5EC; --g-soft:#C8E6C9;
+  --amber:#F59E0B; --amber-pale:#FEF3C7;
+  --red:#DC2626; --red-pale:#FEE2E2;
+  --blue:#2563EB; --blue-pale:#DBEAFE;
+  --gray-900:#111827; --gray-800:#1F2937; --gray-700:#374151;
+  --gray-600:#4B5563; --gray-500:#6B7280; --gray-400:#9CA3AF;
+  --gray-300:#D1D5DB; --gray-200:#E5E7EB; --gray-100:#F3F4F6;
+  --white:#FFFFFF;
+  --sh-sm:0 1px 3px rgba(0,0,0,0.08);
+  --sh-md:0 4px 16px rgba(0,0,0,0.10);
+  --sh-lg:0 8px 32px rgba(0,0,0,0.14);
+  --r:10px; --r-sm:6px;
+  --topbar-h:56px;
+  --mob-bar-h:60px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overscroll-behavior:none}
+body{font-family:'DM Sans',sans-serif;background:#EEF2EF;color:var(--gray-900);font-size:14px}
+
+/* ══ TOPBAR ══ */
+.topbar{background:var(--g-dark);height:var(--topbar-h);display:flex;align-items:center;
+  justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:200;
+  box-shadow:0 2px 12px rgba(0,0,0,0.2)}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-logo{width:32px;height:32px;background:var(--white);border-radius:7px;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:12px;color:var(--g-dark);letter-spacing:-0.5px;flex-shrink:0}
+.brand-text .t1{font-size:14px;font-weight:700;color:var(--white);line-height:1.2}
+.brand-text .t2{font-size:10px;color:rgba(255,255,255,0.55);line-height:1.2}
+.topbar-pills{display:flex;gap:6px}
+.tpill{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;
+  display:flex;align-items:center;gap:4px;white-space:nowrap}
+.tp-open{background:rgba(245,158,11,.25);color:#FCD34D}
+.tp-closed{background:rgba(255,255,255,.12);color:rgba(255,255,255,.8)}
+.dot{width:5px;height:5px;border-radius:50%}
+.da{background:var(--amber)}.dg{background:#4ADE80}
+
+/* ══ LAYOUT ══ */
+.layout{display:flex;min-height:calc(100vh - var(--topbar-h))}
+
+/* ══ SIDEBAR (desktop) ══ */
+.sidebar{width:228px;background:var(--white);border-right:1px solid var(--gray-200);
+  padding:16px 0;flex-shrink:0;position:sticky;top:var(--topbar-h);
+  height:calc(100vh - var(--topbar-h));overflow-y:auto}
+.sb-sec{padding:0 12px 16px}
+.sb-lbl{font-size:10px;font-weight:600;color:var(--gray-400);letter-spacing:1.1px;
+  text-transform:uppercase;padding:0 6px;margin-bottom:6px;display:block}
+.fb{display:flex;align-items:center;justify-content:space-between;width:100%;
+  padding:7px 8px;border-radius:var(--r-sm);border:none;cursor:pointer;
+  background:transparent;color:var(--gray-700);font-size:12.5px;
+  font-family:'DM Sans',sans-serif;font-weight:500;transition:all .15s;margin-bottom:2px}
+.fb:hover{background:var(--g-pale);color:var(--g-dark)}
+.fb.active{background:var(--g-pale);color:var(--g-dark);font-weight:600}
+.fc{font-size:10.5px;font-weight:600;background:var(--gray-100);color:var(--gray-500);
+  padding:1px 6px;border-radius:10px}
+.fb.active .fc{background:var(--g-soft);color:var(--g-dark)}
+.sb-div{height:1px;background:var(--gray-200);margin:2px 0 14px}
+.risk-item{display:flex;align-items:center;gap:7px;padding:6px 8px;border-radius:var(--r-sm);
+  cursor:pointer;transition:background .15s;font-size:12px;color:var(--gray-700);
+  font-weight:500;margin-bottom:2px}
+.risk-item:hover,.risk-item.active{background:var(--gray-100)}
+.rdot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* ══ MAIN ══ */
+.main{flex:1;padding:16px;min-width:0;padding-bottom:80px}
+
+/* ══ TOOLBAR ══ */
+.toolbar{display:flex;gap:10px;align-items:center;margin-bottom:14px;flex-wrap:wrap}
+.srch{position:relative;flex:1;min-width:180px}
+.srch svg{position:absolute;left:11px;top:50%;transform:translateY(-50%);
+  color:var(--gray-400);pointer-events:none}
+.srch-inp{width:100%;padding:10px 12px 10px 36px;border:1.5px solid var(--gray-200);
+  border-radius:var(--r);font-size:14px;font-family:'DM Sans',sans-serif;
+  background:var(--white);color:var(--gray-900);outline:none;transition:border-color .15s}
+.srch-inp:focus{border-color:var(--g-mid)}
+.btn-new{display:flex;align-items:center;gap:7px;padding:10px 16px;border-radius:var(--r);
+  background:var(--g-dark);color:var(--white);border:none;cursor:pointer;
+  font-size:14px;font-weight:600;font-family:'DM Sans',sans-serif;
+  transition:background .15s;white-space:nowrap;min-height:44px}
+.btn-new:hover{background:var(--g-mid)}
+.mob-filter-btn{display:none;align-items:center;gap:6px;padding:10px 14px;
+  border-radius:var(--r);background:var(--white);color:var(--gray-700);
+  border:1.5px solid var(--gray-200);cursor:pointer;font-size:13px;font-weight:600;
+  font-family:'DM Sans',sans-serif;min-height:44px}
+
+/* ══ STATS ══ */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.sc{background:var(--white);border-radius:var(--r);padding:14px 16px;
+  box-shadow:var(--sh-sm);border-left:3px solid transparent}
+.sc.op{border-left-color:var(--amber)}
+.sc.cl{border-left-color:var(--g-mid)}
+.sc.cr{border-left-color:var(--red)}
+.sc.to{border-left-color:var(--blue)}
+.sn{font-size:26px;font-weight:700;font-family:'DM Mono',monospace;line-height:1;margin-bottom:3px}
+.sn.op{color:var(--amber)}.sn.cl{color:var(--g-mid)}.sn.cr{color:var(--red)}.sn.to{color:var(--blue)}
+.sl{font-size:11px;color:var(--gray-500);font-weight:500}
+
+/* ══ CARDS (mobile) ══ */
+.cards-wrap{display:none;flex-direction:column;gap:10px}
+.card{background:var(--white);border-radius:var(--r);padding:14px;
+  box-shadow:var(--sh-sm);border:1px solid var(--gray-200);cursor:pointer;
+  transition:box-shadow .15s;active:box-shadow:var(--sh-md)}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px}
+.card-no{font-family:'DM Mono',monospace;font-size:12px;color:var(--gray-500);white-space:nowrap}
+.card-badges{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.card-desc{font-size:13.5px;color:var(--gray-900);line-height:1.5;margin-bottom:10px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.card-dept{font-size:11px;font-weight:600;background:var(--gray-100);color:var(--gray-700);
+  padding:2px 8px;border-radius:4px}
+.card-person{font-size:11.5px;color:var(--gray-500)}
+.card-date{font-size:11px;color:var(--gray-400);font-family:'DM Mono',monospace;margin-left:auto}
+.card-photo-thumb{width:48px;height:48px;border-radius:6px;object-fit:cover;
+  border:1.5px solid var(--gray-200);flex-shrink:0}
+
+/* ══ TABLE ══ */
+.table-wrap{background:var(--white);border-radius:var(--r);box-shadow:var(--sh-sm);
+  overflow:hidden;border:1px solid var(--gray-200)}
+.table-hdr{display:flex;align-items:center;justify-content:space-between;
+  padding:12px 16px;border-bottom:1px solid var(--gray-200);background:var(--gray-100)}
+.table-hdr-title{font-size:12.5px;font-weight:600;color:var(--gray-700)}
+.row-cnt{font-size:11.5px;color:var(--gray-500);font-family:'DM Mono',monospace}
+.tbl-scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead th{padding:9px 12px;text-align:left;font-size:10.5px;font-weight:600;
+  color:var(--gray-500);letter-spacing:.7px;text-transform:uppercase;
+  background:var(--gray-100);border-bottom:1px solid var(--gray-200);
+  white-space:nowrap;cursor:pointer;user-select:none}
+thead th:hover{color:var(--g-dark)}
+tbody tr{border-bottom:1px solid var(--gray-100);transition:background .1s;cursor:pointer}
+tbody tr:hover{background:var(--g-pale)}
+tbody tr:last-child{border-bottom:none}
+td{padding:10px 12px;vertical-align:middle;font-size:13px;color:var(--gray-800)}
+.td-no{font-family:'DM Mono',monospace;font-size:11.5px;color:var(--gray-500);white-space:nowrap}
+.td-desc{max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.td-dept{font-size:11.5px;font-weight:600}
+.td-date{font-family:'DM Mono',monospace;font-size:11px;color:var(--gray-500);white-space:nowrap}
+.td-photo{width:36px;height:36px;border-radius:5px;object-fit:cover;
+  border:1px solid var(--gray-200);cursor:pointer}
+.td-photo-ph{width:36px;height:36px;border-radius:5px;background:var(--gray-100);
+  display:flex;align-items:center;justify-content:center;color:var(--gray-300)}
+
+/* ══ BADGES ══ */
+.dept-chip{display:inline-block;padding:2px 7px;border-radius:4px;
+  font-size:10.5px;font-weight:600;background:var(--gray-100);color:var(--gray-700)}
+.rb{display:inline-flex;align-items:center;justify-content:center;
+  min-width:26px;height:26px;padding:0 6px;border-radius:5px;
+  font-size:11.5px;font-weight:700;font-family:'DM Mono',monospace}
+.r1,.r2,.r3,.r4{background:var(--g-pale);color:#166534}
+.r5,.r6,.r8,.r9{background:var(--amber-pale);color:#92400E}
+.r10,.r12,.r15{background:#FED7AA;color:#9A3412}
+.r16,.r20,.r25{background:var(--red-pale);color:var(--red)}
+.sb-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 9px;
+  border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap}
+.sb-open{background:var(--amber-pale);color:#92400E}
+.sb-closed{background:var(--g-pale);color:#166534}
+.sb-dot{width:5px;height:5px;border-radius:50%}
+.sb-open .sb-dot{background:var(--amber)}.sb-closed .sb-dot{background:var(--g-mid)}
+
+/* ══ ACTION BTNS ══ */
+.abns{display:flex;gap:3px;opacity:0;transition:opacity .1s}
+tbody tr:hover .abns{opacity:1}
+.abn{width:28px;height:28px;border-radius:5px;border:1px solid var(--gray-200);
+  background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .12s}
+.abn:hover{border-color:var(--g-mid);background:var(--g-pale)}
+.abn:hover svg{color:var(--g-dark)}
+.abn svg{color:var(--gray-500)}
+
+/* ══ PAGINATION ══ */
+.pag{display:flex;align-items:center;justify-content:space-between;
+  padding:10px 16px;border-top:1px solid var(--gray-200);background:var(--gray-100)}
+.pag-info{font-size:11.5px;color:var(--gray-500)}
+.pag-btns{display:flex;gap:4px}
+.pb{padding:5px 10px;border-radius:var(--r-sm);border:1.5px solid var(--gray-200);
+  background:var(--white);font-size:12px;font-weight:600;cursor:pointer;
+  color:var(--gray-700);transition:all .12s;font-family:'DM Sans',sans-serif}
+.pb:hover:not(:disabled){border-color:var(--g-mid);color:var(--g-dark)}
+.pb:disabled{opacity:.4;cursor:default}
+.pb.active{background:var(--g-dark);color:var(--white);border-color:var(--g-dark)}
+
+/* ══ MODALS ══ */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(5px);
+  z-index:300;display:none;align-items:flex-end;justify-content:center}
+.mo.open{display:flex}
+@media(min-width:640px){.mo{align-items:center}}
+.mdl{background:var(--white);width:100%;max-width:640px;max-height:92vh;
+  overflow-y:auto;border-radius:16px 16px 0 0;
+  animation:slideUp .25s cubic-bezier(.34,1.56,.64,1)}
+@media(min-width:640px){
+  .mdl{border-radius:14px;animation:popIn .2s cubic-bezier(.34,1.56,.64,1)}
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+@keyframes popIn{from{opacity:0;transform:scale(.92) translateY(8px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.mdl-sm{max-width:420px}
+.mdl-head{padding:18px 18px 14px;border-bottom:1px solid var(--gray-200);
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  position:sticky;top:0;background:var(--white);z-index:1}
+.mdl-drag{width:36px;height:4px;background:var(--gray-200);border-radius:2px;
+  margin:0 auto 12px;display:none}
+@media(max-width:640px){.mdl-drag{display:block}}
+.mdl-title{font-size:16px;font-weight:700;color:var(--gray-900)}
+.mdl-sub{font-size:12px;color:var(--gray-500);margin-top:2px}
+.mdl-x{width:34px;height:34px;border-radius:8px;border:1.5px solid var(--gray-200);
+  background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all .12s;flex-shrink:0}
+.mdl-x:hover{background:var(--red-pale);border-color:var(--red)}
+.mdl-x:hover svg{color:var(--red)}
+.mdl-body{padding:18px}
+.mdl-foot{padding:14px 18px;border-top:1px solid var(--gray-200);
+  display:flex;gap:10px;justify-content:flex-end;
+  position:sticky;bottom:0;background:var(--white)}
+
+/* ══ FORM ══ */
+.fg{display:flex;flex-direction:column;gap:5px;margin-bottom:14px}
+.fl{font-size:11px;font-weight:600;color:var(--gray-600);letter-spacing:.3px;text-transform:uppercase}
+.fi,.fs,.fta{padding:11px 13px;border-radius:var(--r-sm);border:1.5px solid var(--gray-200);
+  font-size:15px;font-family:'DM Sans',sans-serif;color:var(--gray-900);outline:none;
+  transition:border-color .15s;width:100%;background:var(--white)}
+.fi:focus,.fs:focus,.fta:focus{border-color:var(--g-mid)}
+.fta{resize:vertical;min-height:80px;line-height:1.5}
+.fs{cursor:pointer}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fgrid .full{grid-column:1/-1}
+.risk-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.risk-calc{padding:11px 13px;border-radius:var(--r-sm);background:var(--gray-100);
+  border:1.5px solid var(--gray-200);display:flex;align-items:center;gap:6px}
+.risk-val{font-family:'DM Mono',monospace;font-size:20px;font-weight:700;color:var(--g-dark)}
+
+/* ══ PHOTO UPLOAD ══ */
+.photo-upload-area{border:2px dashed var(--gray-300);border-radius:var(--r);
+  padding:20px;text-align:center;cursor:pointer;transition:all .15s;
+  background:var(--gray-100);position:relative}
+.photo-upload-area:hover,.photo-upload-area.drag{border-color:var(--g-mid);background:var(--g-pale)}
+.photo-upload-area input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.pua-icon{font-size:28px;margin-bottom:6px}
+.pua-text{font-size:13px;color:var(--gray-500);font-weight:500}
+.pua-sub{font-size:11px;color:var(--gray-400);margin-top:3px}
+.photo-preview{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.prev-item{position:relative;width:80px;height:80px}
+.prev-img{width:80px;height:80px;border-radius:7px;object-fit:cover;
+  border:2px solid var(--gray-200)}
+.prev-del{position:absolute;top:-6px;right:-6px;width:20px;height:20px;
+  background:var(--red);color:var(--white);border:2px solid var(--white);
+  border-radius:50%;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;font-size:11px;font-weight:700;line-height:1}
+
+/* ══ DETAIL ══ */
+.ds{margin-bottom:18px}
+.ds-title{font-size:10px;font-weight:600;color:var(--gray-400);letter-spacing:1.1px;
+  text-transform:uppercase;margin-bottom:8px;padding-bottom:5px;
+  border-bottom:1px solid var(--gray-200)}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.dg .full{grid-column:1/-1}
+.dk{font-size:11px;color:var(--gray-400);font-weight:500;margin-bottom:2px}
+.dv{font-size:14px;color:var(--gray-900);font-weight:500}
+.dv-box{font-size:13px;color:var(--gray-700);line-height:1.6;padding:10px 12px;
+  background:var(--gray-100);border-radius:var(--r-sm)}
+.photo-gallery{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.gal-img{width:90px;height:90px;border-radius:7px;object-fit:cover;
+  border:2px solid var(--gray-200);cursor:pointer;transition:transform .15s}
+.gal-img:hover{transform:scale(1.03)}
+@media(max-width:400px){.gal-img{width:75px;height:75px}}
+
+/* ══ LIGHTBOX ══ */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:500;
+  display:none;align-items:center;justify-content:center}
+.lightbox.open{display:flex}
+.lb-img{max-width:95vw;max-height:90vh;border-radius:8px;object-fit:contain}
+.lb-close{position:absolute;top:16px;right:16px;width:40px;height:40px;
+  background:rgba(255,255,255,.15);border-radius:50%;display:flex;
+  align-items:center;justify-content:center;cursor:pointer;color:var(--white)}
+
+/* ══ BTNS ══ */
+.btn{padding:11px 20px;border-radius:var(--r);font-size:14px;font-weight:600;
+  font-family:'DM Sans',sans-serif;cursor:pointer;border:1.5px solid transparent;
+  transition:all .15s;min-height:44px;display:flex;align-items:center;gap:6px}
+.btn-outline{background:var(--white);color:var(--gray-700);border-color:var(--gray-200)}
+.btn-outline:hover{border-color:var(--gray-400)}
+.btn-primary{background:var(--g-dark);color:var(--white);border-color:var(--g-dark)}
+.btn-primary:hover{background:var(--g-mid)}
+.btn-danger{background:var(--red-pale);color:var(--red);border-color:#FECACA}
+.btn-close-action{background:var(--g-dark);color:var(--white);border-color:var(--g-dark)}
+.btn-close-action:hover{background:var(--g-mid)}
+
+/* ══ MOBILE BOTTOM BAR ══ */
+.mob-bar{display:none;position:fixed;bottom:0;left:0;right:0;height:var(--mob-bar-h);
+  background:var(--white);border-top:1px solid var(--gray-200);
+  padding:0 16px;align-items:center;justify-content:space-between;z-index:100;
+  box-shadow:0 -4px 16px rgba(0,0,0,.08)}
+.mob-bar-stat{display:flex;flex-direction:column;align-items:center;gap:1px}
+.mob-bar-num{font-size:18px;font-weight:700;font-family:'DM Mono',monospace;line-height:1}
+.mob-bar-lbl{font-size:9px;color:var(--gray-500);text-transform:uppercase;letter-spacing:.5px}
+.mob-fab{width:52px;height:52px;border-radius:50%;background:var(--g-dark);color:var(--white);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(27,107,46,.4);transition:background .15s}
+.mob-fab:hover{background:var(--g-mid)}
+
+/* ══ MOBILE FILTER SHEET ══ */
+.filter-sheet{position:fixed;inset:0;z-index:400;display:none}
+.filter-sheet.open{display:flex;flex-direction:column;justify-content:flex-end}
+.fs-bg{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+.fs-panel{background:var(--white);border-radius:16px 16px 0 0;padding:20px 16px 36px;
+  position:relative;z-index:1;max-height:80vh;overflow-y:auto;
+  animation:slideUp .25s cubic-bezier(.34,1.56,.64,1)}
+.fs-drag{width:36px;height:4px;background:var(--gray-200);border-radius:2px;
+  margin:0 auto 16px}
+.fs-title{font-size:15px;font-weight:700;color:var(--gray-900);margin-bottom:16px}
+.fs-group{margin-bottom:18px}
+.fs-glbl{font-size:11px;font-weight:700;color:var(--gray-400);letter-spacing:1px;
+  text-transform:uppercase;margin-bottom:8px;display:block}
+.fs-chips{display:flex;flex-wrap:wrap;gap:8px}
+.fs-chip{padding:8px 14px;border-radius:20px;border:1.5px solid var(--gray-200);
+  background:var(--white);font-size:13px;font-weight:500;cursor:pointer;
+  transition:all .15s;font-family:'DM Sans',sans-serif;color:var(--gray-700)}
+.fs-chip.active{background:var(--g-pale);border-color:var(--g-mid);color:var(--g-dark);font-weight:600}
+.fs-apply{width:100%;padding:13px;border-radius:var(--r);background:var(--g-dark);
+  color:var(--white);border:none;cursor:pointer;font-size:15px;font-weight:600;
+  font-family:'DM Sans',sans-serif;margin-top:8px}
+
+/* ══ LOADING ══ */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 20px;gap:12px}
+.spinner{width:32px;height:32px;border:3px solid var(--gray-200);
+  border-top-color:var(--g-mid);border-radius:50%;
+  animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-text{font-size:13px;color:var(--gray-400)}
+
+/* ══ EMPTY ══ */
+.empty{text-align:center;padding:50px 20px;color:var(--gray-400)}
+.empty-icon{font-size:36px;margin-bottom:10px}
+.empty-text{font-size:13.5px;font-weight:500}
+
+/* ══ NOTIF ══ */
+.notif{position:fixed;bottom:72px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--gray-900);color:var(--white);padding:11px 20px;border-radius:10px;
+  font-size:13px;font-weight:500;box-shadow:var(--sh-lg);
+  display:flex;align-items:center;gap:7px;z-index:999;
+  opacity:0;pointer-events:none;transition:all .25s cubic-bezier(.34,1.56,.64,1);
+  white-space:nowrap;max-width:calc(100vw - 32px)}
+.notif.show{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.notif.success{background:var(--g-dark)}
+.notif.error{background:var(--red)}
+
+/* ══ RESPONSIVE ══ */
+@media(max-width:768px){
+  .sidebar{display:none}
+  .stats{grid-template-columns:1fr 1fr}
+  .table-wrap{display:none}
+  .cards-wrap{display:flex}
+  .mob-bar{display:flex}
+  .mob-filter-btn{display:flex}
+  .topbar-pills{display:none}
+  .main{padding:12px;padding-bottom:74px}
+  .btn-new{display:none}
+  .fgrid{grid-template-columns:1fr}
+  .risk-row{grid-template-columns:1fr 1fr;gap:8px}
+  .risk-row .risk-calc-wrap{grid-column:1/-1}
+  .dg{grid-template-columns:1fr}
+  .dg .full{grid-column:1}
+  .mdl-foot{flex-direction:column-reverse}
+  .mdl-foot .btn{width:100%;justify-content:center}
+  .pag{flex-direction:column;gap:8px;align-items:flex-start}
+  .notif{bottom:70px}
+}
+@media(min-width:769px){
+  .mob-bar,.mob-filter-btn{display:none!important}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-logo">NNG</div>
+    <div class="brand-text">
+      <div class="t1">NNG Energy</div>
+      <div class="t2">İSG Aksiyon Takip</div>
+    </div>
+  </div>
+  <div class="topbar-pills">
+    <span class="tpill tp-open"><span class="dot da"></span><span id="pill-open">—</span></span>
+    <span class="tpill tp-closed"><span class="dot dg"></span><span id="pill-closed">—</span></span>
+  </div>
+</div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sb-sec">
+      <span class="sb-lbl">Durum</span>
+      <button class="fb active" onclick="setFilter('status','all')" id="fb-all">Tümü <span class="fc" id="fc-all">0</span></button>
+      <button class="fb" onclick="setFilter('status','Açık')" id="fb-open">Açık <span class="fc" id="fc-open">0</span></button>
+      <button class="fb" onclick="setFilter('status','Kapalı')" id="fb-closed">Kapalı <span class="fc" id="fc-closed">0</span></button>
+    </div>
+    <div class="sb-div"></div>
+    <div class="sb-sec">
+      <span class="sb-lbl">Bölüm</span>
+      <div id="dept-filters"></div>
+    </div>
+    <div class="sb-div"></div>
+    <div class="sb-sec">
+      <span class="sb-lbl">Risk Seviyesi</span>
+      <div id="risk-filters"></div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="toolbar">
+      <div class="srch">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="srch-inp" id="search" type="text" placeholder="Ara: açıklama, numara, bölüm…" oninput="renderAll()">
+      </div>
+      <button class="mob-filter-btn" onclick="openFilterSheet()">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+        Filtre
+      </button>
+      <button class="btn-new" onclick="openAdd()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+        Yeni Kayıt
+      </button>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+      <div class="sc op"><div class="sn op" id="s-open">—</div><div class="sl">Açık</div></div>
+      <div class="sc cl"><div class="sn cl" id="s-closed">—</div><div class="sl">Kapalı</div></div>
+      <div class="sc cr"><div class="sn cr" id="s-crit">—</div><div class="sl">Yüksek Risk</div></div>
+      <div class="sc to"><div class="sn to" id="s-total">—</div><div class="sl">Toplam</div></div>
+    </div>
+
+    <!-- TABLE (desktop) -->
+    <div class="table-wrap">
+      <div class="table-hdr">
+        <div class="table-hdr-title">Uygunsuzluk Listesi</div>
+        <div class="row-cnt" id="row-cnt">—</div>
+      </div>
+      <div class="tbl-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th onclick="sortBy('no')">NO</th>
+              <th onclick="sortBy('date')">TARİH</th>
+              <th>F.</th>
+              <th>UYGUNSUZLUK</th>
+              <th onclick="sortBy('dept')">BÖLÜM</th>
+              <th>SORUMLU</th>
+              <th onclick="sortBy('risk')">RİSK</th>
+              <th onclick="sortBy('status')">DURUM</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbl-body"></tbody>
+        </table>
+      </div>
+      <div class="pag">
+        <div class="pag-info" id="pag-info"></div>
+        <div class="pag-btns" id="pag-btns"></div>
+      </div>
+    </div>
+
+    <!-- CARDS (mobile) -->
+    <div class="cards-wrap" id="cards-wrap"></div>
+  </main>
+</div>
+
+<!-- MOBILE BOTTOM BAR -->
+<div class="mob-bar">
+  <div class="mob-bar-stat">
+    <div class="mob-bar-num" style="color:var(--amber)" id="mb-open">—</div>
+    <div class="mob-bar-lbl">Açık</div>
+  </div>
+  <div class="mob-bar-stat">
+    <div class="mob-bar-num" style="color:var(--g-mid)" id="mb-closed">—</div>
+    <div class="mob-bar-lbl">Kapalı</div>
+  </div>
+  <button class="mob-fab" onclick="openAdd()">
+    <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg>
+  </button>
+  <div class="mob-bar-stat">
+    <div class="mob-bar-num" style="color:var(--red)" id="mb-crit">—</div>
+    <div class="mob-bar-lbl">Kritik</div>
+  </div>
+  <div class="mob-bar-stat">
+    <div class="mob-bar-num" style="color:var(--blue)" id="mb-total">—</div>
+    <div class="mob-bar-lbl">Toplam</div>
+  </div>
+</div>
+
+<!-- ══ MOBILE FILTER SHEET ══ -->
+<div class="filter-sheet" id="filter-sheet">
+  <div class="fs-bg" onclick="closeFilterSheet()"></div>
+  <div class="fs-panel">
+    <div class="fs-drag"></div>
+    <div class="fs-title">Filtrele</div>
+    <div class="fs-group">
+      <span class="fs-glbl">Durum</span>
+      <div class="fs-chips">
+        <button class="fs-chip active" data-f="status" data-v="all" onclick="setMobFilter(this,'status','all')">Tümü</button>
+        <button class="fs-chip" data-f="status" data-v="Açık" onclick="setMobFilter(this,'status','Açık')">Açık</button>
+        <button class="fs-chip" data-f="status" data-v="Kapalı" onclick="setMobFilter(this,'status','Kapalı')">Kapalı</button>
+      </div>
+    </div>
+    <div class="fs-group">
+      <span class="fs-glbl">Risk Seviyesi</span>
+      <div class="fs-chips">
+        <button class="fs-chip active" data-f="risk" data-v="all" onclick="setMobFilter(this,'risk','all')">Tümü</button>
+        <button class="fs-chip" data-f="risk" data-v="low" onclick="setMobFilter(this,'risk','low')">Önemsiz (1-4)</button>
+        <button class="fs-chip" data-f="risk" data-v="med" onclick="setMobFilter(this,'risk','med')">Kontrol (5-9)</button>
+        <button class="fs-chip" data-f="risk" data-v="high" onclick="setMobFilter(this,'risk','high')">Düzeltici (10-15)</button>
+        <button class="fs-chip" data-f="risk" data-v="crit" onclick="setMobFilter(this,'risk','crit')">Kritik (16+)</button>
+      </div>
+    </div>
+    <div class="fs-group">
+      <span class="fs-glbl">Bölüm</span>
+      <div class="fs-chips" id="mob-dept-chips"></div>
+    </div>
+    <button class="fs-apply" onclick="closeFilterSheet()">Uygula</button>
+  </div>
+</div>
+
+<!-- ══ ADD/EDIT MODAL ══ -->
+<div class="mo" id="mo-add">
+  <div class="mdl">
+    <div class="mdl-drag"></div>
+    <div class="mdl-head">
+      <div>
+        <div class="mdl-title" id="add-title">Yeni Uygunsuzluk</div>
+        <div class="mdl-sub">Tüm alanları eksiksiz doldurunuz</div>
+      </div>
+      <button class="mdl-x" onclick="closeMo('add')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="mdl-body">
+      <div class="fgrid">
+        <div class="fg">
+          <label class="fl">Uygunsuzluk No</label>
+          <input class="fi" id="f-no" placeholder="örn. 2026-210">
+        </div>
+        <div class="fg">
+          <label class="fl">Tespit Tarihi</label>
+          <input class="fi" id="f-date" type="date">
+        </div>
+        <div class="fg full">
+          <label class="fl">Uygunsuzluk Açıklaması</label>
+          <textarea class="fta" id="f-desc" placeholder="Uygunsuzluğu detaylı olarak açıklayınız…" rows="3"></textarea>
+        </div>
+        <div class="fg full">
+          <label class="fl">Tehlike</label>
+          <input class="fi" id="f-hazard" placeholder="Oluşabilecek tehlike…">
+        </div>
+        <div class="fg full">
+          <label class="fl">Aksiyon Önerisi</label>
+          <textarea class="fta" id="f-action" placeholder="Alınması gereken aksiyon…" rows="2"></textarea>
+        </div>
+        <div class="fg">
+          <label class="fl">Bölüm</label>
+          <select class="fs" id="f-dept">
+            <option value="">Seçiniz</option>
+            <option>MEKANİK</option><option>ELEKTRİK</option><option>KAYNAK</option>
+            <option>BOYA</option><option>İSG</option><option>ÇEVRE</option>
+            <option>İDARİ İŞLER</option><option>SATIN ALMA</option><option>YANGIN</option>
+            <option>MEKANİK- ELEKTRİK</option><option>ELEKTRİK- KAYNAK</option><option>Diğer</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Sorumlu Kişi</label>
+          <input class="fi" id="f-person" placeholder="Ad Soyad">
+        </div>
+        <div class="fg">
+          <label class="fl">Aksiyon Türü</label>
+          <select class="fs" id="f-type">
+            <option>Tehlike Bildirimi</option>
+            <option>Dış Denetim</option>
+            <option>İç Denetim</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label class="fl">Tespit Eden</label>
+          <input class="fi" id="f-finder" placeholder="Ad Soyad">
+        </div>
+        <div class="fg full">
+          <label class="fl">Risk Matrisi</label>
+          <div class="risk-row">
+            <div class="fg" style="margin-bottom:0">
+              <label class="fl" style="font-size:10px">Olasılık (1-5)</label>
+              <select class="fs" id="f-prob" onchange="calcRisk()">
+                <option value="">-</option>
+                <option value="1">1 - Çok Küçük</option><option value="2">2 - Küçük</option>
+                <option value="3">3 - Orta</option><option value="4">4 - Yüksek</option>
+                <option value="5">5 - Çok Yüksek</option>
+              </select>
+            </div>
+            <div class="fg" style="margin-bottom:0">
+              <label class="fl" style="font-size:10px">Şiddet (1-5)</label>
+              <select class="fs" id="f-sev" onchange="calcRisk()">
+                <option value="">-</option>
+                <option value="1">1 - Çok Hafif</option><option value="2">2 - Hafif</option>
+                <option value="3">3 - Orta</option><option value="4">4 - Ciddi</option>
+                <option value="5">5 - Çok Ciddi</option>
+              </select>
+            </div>
+            <div class="fg risk-calc-wrap" style="margin-bottom:0">
+              <label class="fl" style="font-size:10px">Risk Skoru</label>
+              <div class="risk-calc"><span class="risk-val" id="f-risk-val">—</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="fg full">
+          <label class="fl">📷 Uygunsuzluk Fotoğrafı</label>
+          <div class="photo-upload-area" id="pua-add" ondragover="e.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="handleDrop(event,'add')">
+            <input type="file" id="f-photos" accept="image/*" multiple onchange="handleFiles(this.files,'add')">
+            <div class="pua-icon">📸</div>
+            <div class="pua-text">Fotoğraf ekle veya sürükle</div>
+            <div class="pua-sub">JPG, PNG — çoklu seçim yapılabilir</div>
+          </div>
+          <div class="photo-preview" id="pua-preview"></div>
+        </div>
+      </div>
+    </div>
+    <div class="mdl-foot">
+      <button class="btn btn-outline" onclick="closeMo('add')">İptal</button>
+      <button class="btn btn-primary" onclick="saveRecord()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+        Kaydet
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DETAIL MODAL ══ -->
+<div class="mo" id="mo-detail">
+  <div class="mdl">
+    <div class="mdl-drag"></div>
+    <div class="mdl-head">
+      <div>
+        <div class="mdl-title" id="d-no">—</div>
+        <div class="mdl-sub" id="d-sub">—</div>
+      </div>
+      <button class="mdl-x" onclick="closeMo('detail')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="mdl-body" id="d-body"></div>
+    <div class="mdl-foot" id="d-foot"></div>
+  </div>
+</div>
+
+<!-- ══ CLOSE MODAL ══ -->
+<div class="mo" id="mo-close">
+  <div class="mdl mdl-sm">
+    <div class="mdl-drag"></div>
+    <div class="mdl-head">
+      <div>
+        <div class="mdl-title">✓ Aksiyonu Kapat</div>
+        <div class="mdl-sub" id="cl-no-lbl">—</div>
+      </div>
+      <button class="mdl-x" onclick="closeMo('close')"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+    </div>
+    <div class="mdl-body">
+      <div class="fg">
+        <label class="fl">Yapılan Aksiyon Açıklaması</label>
+        <textarea class="fta" id="cl-desc" placeholder="Yapılan aksiyonu açıklayınız…" rows="4"></textarea>
+      </div>
+      <div class="fg">
+        <label class="fl">Kapanış Tarihi</label>
+        <input class="fi" id="cl-date" type="date">
+      </div>
+      <div class="fg">
+        <label class="fl">📷 Kapatma Fotoğrafı (Düzeltme kanıtı)</label>
+        <div class="photo-upload-area" ondragover="e.preventDefault()" ondrop="handleDrop(event,'close')">
+          <input type="file" id="cl-photos" accept="image/*" multiple onchange="handleFiles(this.files,'close')">
+          <div class="pua-icon">📸</div>
+          <div class="pua-text">Düzeltme fotoğrafı ekle</div>
+          <div class="pua-sub">Aksiyonun tamamlandığını gösteren fotoğraf</div>
+        </div>
+        <div class="photo-preview" id="cl-pua-preview"></div>
+      </div>
+    </div>
+    <div class="mdl-foot">
+      <button class="btn btn-outline" onclick="closeMo('close')">İptal</button>
+      <button class="btn btn-close-action" onclick="confirmClose()">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+        Kapat
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lb-close"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg></button>
+  <img class="lb-img" id="lb-img" src="" alt="">
+</div>
+
+<!-- NOTIFICATION -->
+<div class="notif" id="notif"></div>
+
+<!-- ══ FIREBASE COMPAT SDK ══ -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyA24fxljjnMVd03oLLfwwjyoecweCIfDMU",
+  authDomain: "isg-uygunsuzluk.firebaseapp.com",
+  projectId: "isg-uygunsuzluk",
+  storageBucket: "isg-uygunsuzluk.firebasestorage.app",
+  messagingSenderId: "384573784396",
+  appId: "1:384573784396:web:a4f197bf6e1a55fae8cfe9"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+const COL = "uygunsuzluklar";
+
+// ── STATE ──
+let records = [];
+let filtered = [];
+let sortKey = 'date', sortDir = -1;
+let curPage = 1;
+const PG = 15;
+let activeFilter = { status:'all', dept:null, risk:'all' };
+let editingId = null, closingId = null;
+let addPhotos = [], closePhotos = []; // base64 or URL list
+let addPhotoFiles = [], closePhotoFiles = []; // File objects for upload
+
+// ── HELPERS ──
+function today(){ return new Date().toISOString().slice(0,10); }
+
+function fmtDate(d) {
+  if(!d) return '—';
+  // Firestore Timestamp
+  if(d && typeof d.toDate === 'function') {
+    const dt = d.toDate();
+    return dt.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  }
+  // ISO string YYYY-MM-DD
+  if(typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d)){
+    const [y,m,dd] = d.split('-');
+    return `${dd}.${m}.${y}`;
+  }
+  // Excel serial number (old data)
+  if(typeof d === 'number' && d > 40000){
+    const base = new Date(1899,11,30);
+    const dt = new Date(base.getTime() + d*86400000);
+    return dt.toLocaleDateString('tr-TR',{day:'2-digit',month:'2-digit',year:'numeric'});
+  }
+  if(typeof d === 'string') return d;
+  return '—';
+}
+
+function riskCls(r){
+  const n=parseInt(r)||0;
+  if(n>=16) return 'r16';
+  if(n>=10) return 'r10';
+  if(n>=5) return 'r5';
+  if(n>=1) return 'r1';
+  return '';
+}
+
+function stNorm(s){
+  if(!s) return 'Açık';
+  return String(s).toLowerCase().includes('kapal') ? 'Kapalı' : 'Açık';
+}
+
+function riskLabel(r){
+  const n=parseInt(r)||0;
+  if(n>=16) return 'Risk düşürülene kadar durdur';
+  if(n>=10) return 'Düzeltici faaliyet başlatılmalı';
+  if(n>=5) return 'Kontrol edilmeli';
+  return 'Önemsiz risk';
+}
+
+// ── SEED DATA ──
+const SEED = [
+  {no:'2025-4',date:'2025-01-13',desc:'Düzensiz şekilde istiflenen profil malzemelerinin düşme tehlikesi bulunmaktadır',hazard:'Yüksekten malzeme düşmesi',action:'Stopper yapılabilir veya profillerin düzenli bir şekilde konumlandırılması sağlanır',dept:'KAYNAK',person:'SERHAT UĞUR',prob:2,sev:5,risk:10,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-1',date:'2026-01-14',desc:'Sahada olan seyyar merdivenin tekerlerinden birinin zemine temas etmediği tespit edilmiştir',hazard:'Devrilme ve düşme sonucu yaralanma',action:'Kullanılmamalı ve tamiri yapılmalıdır',dept:'MEKANİK ELEKTRİK',person:'AHMET KAMİL TOMBAK-ONUR TOPAL',prob:3,sev:3,risk:9,status:'Kapalı',actionDesc:'Onarım yapılmış olup aksiyon alınmıştır',closeDate:'2026-03-17',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-25',date:'2026-01-21',desc:'Atıkların geçici olarak depolanabileceği tanımlı bir atık sahasın olması gerekmektedir',hazard:'Atıkların karışması durumunda geri dönüşüm ve bertarafın aksaması',action:'Atık sahasının yapılması',dept:'ÇEVRE',person:'ONUR NİYAZİ DENİZ',prob:3,sev:4,risk:12,status:'Kapalı',actionDesc:'Atık saha yapımı bitmiştir',closeDate:'2026-03-07',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-47',date:'2026-01-28',desc:'Trafonun olduğu yan cephenin kenarında bulunan ızgaraların deforme olduğu içeri doğru büküldüğü tespit edilmiştir',hazard:'Takılma ve düşme riski oluşturmaktadır',action:'Deformeli ızgaranın onarımı yada yenilenmesi',dept:'KAYNAK',person:'ONUR NİYAZİ DENİZ - ALPEREN KARANİ',prob:3,sev:3,risk:9,status:'Kapalı',actionDesc:'Izgaralar düzeltilip duba dizilmiştir',closeDate:'2026-04-29',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-76',date:'2026-02-18',desc:'Yangın pompa dairesine giriş, çıkış, malzeme transferi yapılırken kapak açıldığında alan boşluğu oluşmaktadır',hazard:'Düşme tehlikesi yaratmaktadır',action:'Demonte aparatlarla toplu koruma önlemleri alınmalıdır',dept:'KAYNAK',person:'ALPEREN KARANİ',prob:4,sev:5,risk:20,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-121',date:'2026-03-10',desc:'Mekanik ve elektrik bölümlerinde kullanılan kaldırma ekipmanlarına ait mapanın yamulduğu tespit edilmiştir',hazard:'Mapa kilidinin yamulmadan kaynaklı tam kapanmaması sonucu malzeme düşme riskinden kaynaklı yaralanmalar',action:'Deforme olmuş mapanın kullanımdan kaldırılması',dept:'MEKANİK- ELEKTRİK',person:'AHMET KAMİL TOMBAK - ONUR TOPAL',prob:4,sev:5,risk:20,status:'Kapalı',actionDesc:'Personeller konu hakkında bilgilendirilmiştir, mapa atık sahasına atılmıştır',closeDate:'2026-03-28',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-129',date:'2026-03-17',desc:'Mekanik atölyesinde kurulu bulunan balans makinesinin enerji besleme hattında 300 mA kaçak akım rolesi kullanıldığı tespit edilmiştir',hazard:'300 mA kaçak akım rolesinin açma eşiği yüksek olduğundan personellere elektrik çarpma riski bulunmaktadır',action:'Personel güvenliğini sağlamak için 30 mA kaçak akım rolesi kullanılmalıdır',dept:'ELEKTRİK',person:'ONUR TOPAL',prob:3,sev:5,risk:15,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-145',date:'2026-03-24',desc:'Kaynak atölyesi tarafından kullanımda olan manyetik matkabın elektrik kablosunda hasar olduğu tespit edilmiştir',hazard:'Hasarlı kablo nedeni ile elektrik kaçağı, kısa devre ve elektrik çarpması',action:'Yetkili elektrik birimi tarafından onarımının yapılması',dept:'ELEKTRİK- KAYNAK',person:'ONUR TOPAL- ALPEREN KARANİ',prob:4,sev:5,risk:20,status:'Kapalı',actionDesc:'Elektrik atölyesi tarafından onarılmıştır',closeDate:'2026-04-05',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-174',date:'2026-04-07',desc:'Mekanik atölyesinde kullanılmakta olan 5 tonluk sapanın deforme olduğu tespit edilmiştir',hazard:'Malzeme düşme, sapan yırtılma sonucu yaralanmalar',action:'Sapan kullanım dışı bırakılmalı, sahadan derhal çıkarılmalıdır',dept:'MEKANİK',person:'AHMET KAMİL TOMBAK',prob:4,sev:5,risk:20,status:'Kapalı',actionDesc:'Personeller bilgilendirilmiş olup ayrılmıştır',closeDate:'2026-04-17',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-188',date:'2026-04-14',desc:'Tesis geneli bütün hidrantlardan su gelmediği gözlemlenmiştir',hazard:'Olası bir yangın durumunda söndürme ekipmanlarının çalışmamasından dolayı yangının büyümesi',action:'Hidrant hattının kontrol edilmesi',dept:'İSG',person:'DİLAN ÇELİK',prob:3,sev:5,risk:15,status:'Kapalı',actionDesc:'Acil durum butonuna basıldığı tespit edilmiş olup elektrik birimi yardımı ile aktif hale getirilmiştir',closeDate:'2026-04-20',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-203',date:'2026-04-28',desc:'Mekanik atölyesi yürüyüş yolu üzerinde malzemeler olduğu ve kapıların yürüyüş yoluna denk geldiği tespit edilmiştir',hazard:'Tahliye esnasında malzemelere çarpma sonucu yaralanmalar ve tahliyenin gecikmesi',action:'Malzemelerin daha uygun bir alana taşınması',dept:'MEKANİK',person:'SERHAT UĞUR',prob:3,sev:4,risk:12,status:'Kapalı',actionDesc:'Malzemeler alınmıştır',closeDate:'2026-04-29',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-204',date:'2026-04-28',desc:'Mekanik ve Elektrik atölyesinde kullanımda olan 4 kollu zincir sapanın zincir katlama pimlerinde sorun olduğu tespit edilmiştir',hazard:'Zincirin kurtulması sonucu yük sarsılması, sıkışma yaralanma',action:'Onarımının yapılması gerekmektedir',dept:'MEKANİK- ELEKTRİK',person:'SERHAT UĞUR-AHMET YİĞİT GÜLDÜREN',prob:3,sev:4,risk:12,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-205',date:'2026-04-29',desc:'Boya atölyesinde bulunan yangın dolabı önünde malzemeler bulunduğu dolaba erişim sağlanamadığı tespit edilmiştir',hazard:'Acil durum esnasında müdahalenin gecikmesi',action:'Malzemelerin tüp ve dolap önünden alınması gerekmektedir',dept:'BOYA',person:'ALPEREN KARANİ',prob:3,sev:3,risk:9,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-206',date:'2026-04-30',desc:'Mekanik aşağı iniş merdivenin yanında bulunan yangın dolabının önünde malzemeler bulunduğu tespit edilmiştir',hazard:'Müdahale esnasında takılma sonucu yaralanma, müdahalenin gecikmesi',action:'Dolap önü ve yanlarının açık olması, malzemelerin kaldırılması',dept:'MEKANİK',person:'BATUHAN SANCAK',prob:3,sev:3,risk:9,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-207',date:'2026-04-30',desc:'Elektrik atölyesi kısmında palet üzerinde bazı malzemelerin paletten taştığı gözlemlenmiştir',hazard:'Çarpma sonucu bilet ayak yaralanmaları kesilmeleri',action:'Malzemelerin daha uygun taşmayacak şekilde istiflenmesi',dept:'ELEKTRİK',person:'ONUR TOPAL',prob:2,sev:3,risk:6,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-208',date:'2026-05-01',desc:'Yük asansörü yanında yapılan boya çalışmasının belirli periyodlar ile yapıldığı ve çalışma esnasında oluşan gazlardan diğer çalışan personellerin de maruz kaldığı gözlemlenmiştir',hazard:'Maruziyetten kaynaklı oluşan meslek hastalıkları',action:'Boya için uygun bir alan yapılmalı, malzeme boya atölyesine taşınmalı',dept:'BOYA',person:'ALPEREN KARANİ',prob:3,sev:4,risk:12,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+  {no:'2026-209',date:'2026-05-01',desc:'Kaynak atölyesinden yukarı çıkış merdiveninin ışığının yükseklikten kaynaklı algılanmadığı gözlemlenmiştir',hazard:'Yetersiz aydınlatmadan kaynaklı düşme sonucu yaralanmalar',action:'Aydınlatmanın tamir edilmesi sensörün algılayabilecek bir alana getirilmesi',dept:'ELEKTRİK',person:'ONUR TOPAL',prob:4,sev:3,risk:12,status:'Açık',actionDesc:'',closeDate:'',type:'Tehlike Bildirimi',finder:'Onur Niyazi DENİZ-Dilan ÇELİK',photos:[],closePhotos:[]},
+];
+
+async function seedIfEmpty(){
+  const snap = await db.collection(COL).limit(1).get();
+  if(!snap.empty) return; // zaten veri var
+  notify('Veriler yükleniyor…');
+  const batch = db.batch();
+  SEED.forEach(r => {
+    const ref = db.collection(COL).doc();
+    batch.set(ref, {...r, createdAt: firebase.firestore.FieldValue.serverTimestamp()});
+  });
+  await batch.commit();
+  notify('Örnek veriler eklendi ✓', 'success');
+}
+
+// ── FIRESTORE ──
+function listen(){
+  showLoading();
+  db.collection(COL).onSnapshot(snap => {
+    records = snap.docs.map(d => ({id: d.id, ...d.data()}));
+    buildSidebar();
+    renderAll();
+    hideLoading();
+  }, err => {
+    console.error(err);
+    hideLoading();
+    notify('Bağlantı hatası: '+err.message, 'error');
+  });
+}
+
+function showLoading(){
+  document.getElementById('tbl-body').innerHTML = `<tr><td colspan="9"><div class="loading"><div class="spinner"></div><div class="loading-text">Veriler yükleniyor…</div></div></td></tr>`;
+  document.getElementById('cards-wrap').innerHTML = `<div class="loading"><div class="spinner"></div><div class="loading-text">Veriler yükleniyor…</div></div>`;
+}
+function hideLoading(){}
+
+// Fotoğrafı base64'e çevir (Storage gerekmez)
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    // Büyük fotoğrafları küçült (max 800px, %75 kalite)
+    const reader = new FileReader();
+    reader.onload = ev => {
+      const img = new Image();
+      img.onload = () => {
+        const MAX = 800;
+        let w = img.width, h = img.height;
+        if(w > MAX || h > MAX){
+          if(w > h){ h = Math.round(h * MAX/w); w = MAX; }
+          else { w = Math.round(w * MAX/h); h = MAX; }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.75));
+      };
+      img.onerror = reject;
+      img.src = ev.target.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+async function saveRecord(){
+  const no = document.getElementById('f-no').value.trim();
+  const desc = document.getElementById('f-desc').value.trim();
+  if(!no||!desc){ notify('Numara ve açıklama zorunludur','error'); return; }
+  const p=parseInt(document.getElementById('f-prob').value)||0;
+  const s=parseInt(document.getElementById('f-sev').value)||0;
+  const data = {
+    no, desc,
+    date: document.getElementById('f-date').value || today(),
+    hazard: document.getElementById('f-hazard').value.trim(),
+    action: document.getElementById('f-action').value.trim(),
+    dept: document.getElementById('f-dept').value,
+    person: document.getElementById('f-person').value.trim(),
+    type: document.getElementById('f-type').value,
+    finder: document.getElementById('f-finder').value.trim(),
+    prob:p, sev:s, risk:p*s,
+    status: editingId ? (records.find(r=>r.id===editingId)?.status||'Açık') : 'Açık',
+    actionDesc: editingId ? (records.find(r=>r.id===editingId)?.actionDesc||'') : '',
+    closeDate: editingId ? (records.find(r=>r.id===editingId)?.closeDate||'') : '',
+    updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+  };
+
+  // Fotoğrafları base64'e çevir
+  const existingPhotos = editingId ? (records.find(r=>r.id===editingId)?.photos||[]) : [];
+  let newPhotoURLs = [];
+  const btn = document.querySelector('#mo-add .btn-primary');
+  btn.textContent = 'Kaydediliyor…'; btn.disabled = true;
+  try {
+    for(let i=0; i<addPhotoFiles.length; i++){
+      const b64 = await fileToBase64(addPhotoFiles[i]);
+      newPhotoURLs.push(b64);
+    }
+    data.photos = [...existingPhotos, ...newPhotoURLs];
+    if(editingId){
+      await db.collection(COL).doc(editingId).update(data);
+      notify('Kayıt güncellendi ✓','success');
+    } else {
+      data.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+      await db.collection(COL).add(data);
+      notify('Yeni kayıt eklendi ✓','success');
+    }
+    closeMo('add');
+  } catch(e){
+    notify('Hata: '+e.message,'error');
+  } finally {
+    btn.textContent = 'Kaydet'; btn.disabled = false;
+  }
+}
+
+async function confirmClose(){
+  const desc = document.getElementById('cl-desc').value.trim();
+  if(!desc){ notify('Aksiyon açıklaması giriniz','error'); return; }
+  const date = document.getElementById('cl-date').value || today();
+  const btn = document.querySelector('#mo-close .btn-close-action');
+  btn.textContent = 'Kaydediliyor…'; btn.disabled=true;
+  try {
+    let closePhotoURLs = [];
+    for(let i=0; i<closePhotoFiles.length; i++){
+      const b64 = await fileToBase64(closePhotoFiles[i]);
+      closePhotoURLs.push(b64);
+    }
+    await db.collection(COL).doc(closingId).update({
+      status:'Kapalı', actionDesc:desc, closeDate:date,
+      closePhotos: closePhotoURLs, updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+    });
+    notify('Aksiyon kapatıldı ✓','success');
+    closeMo('close');
+  } catch(e){
+    notify('Hata: '+e.message,'error');
+  } finally {
+    btn.textContent = 'Kapat'; btn.disabled=false;
+  }
+}
+
+async function deleteRecord(id){
+  if(!confirm('Bu kayıt silinecek. Emin misiniz?')) return;
+  try {
+    await db.collection(COL).doc(id).delete();
+    notify('Kayıt silindi');
+  } catch(e){ notify('Hata: '+e.message,'error'); }
+}
+
+// ── EXPOSE TO GLOBAL ──
+window.saveRecord = saveRecord;
+window.confirmClose = confirmClose;
+window.deleteRecord = deleteRecord;
+
+// ── FILTER / SORT ──
+window.setFilter = function(key,val){
+  activeFilter[key]=val;
+  curPage=1;
+  // update sidebar btns
+  if(key==='status'){
+    ['all','open','closed'].forEach(x=>document.getElementById('fb-'+x)?.classList.remove('active'));
+    const map={all:'fb-all',Açık:'fb-open',Kapalı:'fb-closed'};
+    document.getElementById(map[val]||'fb-all')?.classList.add('active');
+  }
+  if(key==='dept'){
+    document.querySelectorAll('.dept-fb').forEach(b=>b.classList.remove('active'));
+    if(val) document.getElementById('deptf-'+val)?.classList.add('active');
+    else document.getElementById('deptf-all')?.classList.add('active');
+  }
+  if(key==='riskGroup'){
+    document.querySelectorAll('.risk-item').forEach(b=>b.classList.remove('active'));
+    if(val) document.getElementById('riskf-'+val)?.classList.add('active');
+    else document.getElementById('riskf-all')?.classList.add('active');
+  }
+  renderAll();
+}
+
+window.sortBy = function(k){
+  if(sortKey===k) sortDir*=-1; else{sortKey=k;sortDir=-1;}
+  renderAll();
+}
+
+window.changePage = function(p){
+  const pages=Math.ceil(filtered.length/PG);
+  if(p<1||p>pages) return;
+  curPage=p; renderTable();
+}
+
+function getFiltered(){
+  const q=document.getElementById('search').value.toLowerCase();
+  const rMap={low:[1,4],med:[5,9],high:[10,15],crit:[16,999]};
+  return records.filter(r=>{
+    if(activeFilter.status!=='all' && stNorm(r.status)!==activeFilter.status) return false;
+    if(activeFilter.dept && !r.dept?.includes(activeFilter.dept)) return false;
+    if(activeFilter.risk && activeFilter.risk!=='all'){
+      const [mn,mx]=rMap[activeFilter.risk]||[0,999];
+      if(r.risk<mn||r.risk>mx) return false;
+    }
+    if(q){
+      return (r.desc||'').toLowerCase().includes(q)||
+             (r.no||'').toLowerCase().includes(q)||
+             (r.dept||'').toLowerCase().includes(q)||
+             (r.person||'').toLowerCase().includes(q);
+    }
+    return true;
+  }).sort((a,b)=>{
+    let av=a[sortKey],bv=b[sortKey];
+    if(sortKey==='risk'){av=parseInt(av)||0;bv=parseInt(bv)||0;}
+    else{av=String(av||'');bv=String(bv||'');}
+    if(av<bv) return -sortDir;
+    if(av>bv) return sortDir;
+    return 0;
+  });
+}
+
+// ── RENDER ──
+function renderAll(){
+  filtered=getFiltered();
+  curPage=Math.min(curPage, Math.max(1,Math.ceil(filtered.length/PG)));
+  renderStats();
+  renderTable();
+  renderCards();
+}
+
+function renderStats(){
+  const open=records.filter(r=>stNorm(r.status)==='Açık').length;
+  const closed=records.filter(r=>stNorm(r.status)==='Kapalı').length;
+  const crit=records.filter(r=>r.risk>=16).length;
+  const total=records.length;
+  ['open','closed','crit','total'].forEach(k=>{
+    const vals={open,closed,crit,total};
+    ['s-','mb-','pill-'].forEach(pfx=>{
+      const el=document.getElementById(pfx+k);
+      if(el) el.textContent=vals[k];
+    });
+  });
+  // sidebar counts
+  const e=id=>document.getElementById(id);
+  if(e('fc-all')) e('fc-all').textContent=total;
+  if(e('fc-open')) e('fc-open').textContent=open;
+  if(e('fc-closed')) e('fc-closed').textContent=closed;
+  if(e('pill-open')) e('pill-open').textContent=open+' Açık';
+  if(e('pill-closed')) e('pill-closed').textContent=closed+' Kapalı';
+}
+
+function renderTable(){
+  const start=(curPage-1)*PG;
+  const slice=filtered.slice(start,start+PG);
+  document.getElementById('row-cnt').textContent=filtered.length+' kayıt';
+
+  if(!slice.length){
+    document.getElementById('tbl-body').innerHTML=`<tr><td colspan="9"><div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Kayıt bulunamadı</div></div></td></tr>`;
+    document.getElementById('pag-info').textContent='';
+    document.getElementById('pag-btns').innerHTML='';
+    return;
+  }
+
+  document.getElementById('tbl-body').innerHTML = slice.map(r=>{
+    const st=stNorm(r.status);
+    const rc=riskCls(r.risk);
+    const ph=r.photos?.[0];
+    return `<tr onclick="openDetail('${r.id}')">
+      <td class="td-no">${r.no||'—'}</td>
+      <td class="td-date">${fmtDate(r.date)}</td>
+      <td>${ph?`<img class="td-photo" src="${ph}" onclick="event.stopPropagation();openLB('${ph}')" loading="lazy">` : `<div class="td-photo-ph"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></div>`}</td>
+      <td class="td-desc">${r.desc||'—'}</td>
+      <td class="td-dept"><span class="dept-chip">${(r.dept||'—').split(/[-–]/)[0].trim()}</span></td>
+      <td style="font-size:12px;color:var(--gray-600);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.person||'—'}</td>
+      <td><span class="rb ${rc}">${r.risk||'—'}</span></td>
+      <td><span class="sb-badge ${st==='Kapalı'?'sb-closed':'sb-open'}"><span class="sb-dot"></span>${st}</span></td>
+      <td onclick="event.stopPropagation()">
+        <div class="abns">
+          <button class="abn" title="Düzenle" onclick="openEdit('${r.id}')">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          </button>
+          ${st==='Açık'?`<button class="abn" title="Kapat" onclick="openClose('${r.id}')">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+          </button>`:''}
+          <button class="abn" title="Sil" onclick="deleteRecord('${r.id}')">
+            <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+          </button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Pagination
+  const pages=Math.ceil(filtered.length/PG);
+  document.getElementById('pag-info').textContent=`${start+1}–${Math.min(start+PG,filtered.length)} / ${filtered.length}`;
+  let ph=`<button class="pb" onclick="changePage(${curPage-1})" ${curPage<=1?'disabled':''}>‹</button>`;
+  for(let i=1;i<=pages;i++){
+    if(pages<=6||Math.abs(i-curPage)<=1||i===1||i===pages)
+      ph+=`<button class="pb${i===curPage?' active':''}" onclick="changePage(${i})">${i}</button>`;
+    else if(Math.abs(i-curPage)===2) ph+=`<span style="padding:0 3px;color:var(--gray-400)">…</span>`;
+  }
+  ph+=`<button class="pb" onclick="changePage(${curPage+1})" ${curPage>=pages?'disabled':''}>›</button>`;
+  document.getElementById('pag-btns').innerHTML=ph;
+}
+
+function renderCards(){
+  const wrap=document.getElementById('cards-wrap');
+  if(!filtered.length){
+    wrap.innerHTML=`<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">Kayıt bulunamadı</div></div>`;
+    return;
+  }
+  wrap.innerHTML=filtered.map(r=>{
+    const st=stNorm(r.status);
+    const rc=riskCls(r.risk);
+    const ph=r.photos?.[0];
+    return `<div class="card" onclick="openDetail('${r.id}')">
+      <div class="card-head">
+        <div style="min-width:0">
+          <div class="card-no">${r.no||'—'}</div>
+        </div>
+        <div class="card-badges">
+          <span class="rb ${rc}" style="height:24px">${r.risk||'—'}</span>
+          <span class="sb-badge ${st==='Kapalı'?'sb-closed':'sb-open'}"><span class="sb-dot"></span>${st}</span>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start">
+        <div style="flex:1;min-width:0">
+          <div class="card-desc">${r.desc||'—'}</div>
+          <div class="card-meta">
+            <span class="card-dept">${(r.dept||'—').split(/[-–]/)[0].trim()}</span>
+            <span class="card-person">${r.person||''}</span>
+            <span class="card-date">${fmtDate(r.date)}</span>
+          </div>
+        </div>
+        ${ph?`<img class="card-photo-thumb" src="${ph}" loading="lazy" onclick="event.stopPropagation();openLB('${ph}')">` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── SIDEBAR ──
+function buildSidebar(){
+  const depts=[...new Set(records.map(r=>r.dept?.split(/[-–,\/]/)[0].trim()).filter(Boolean))].sort();
+  let h=`<button class="fb dept-fb active" id="deptf-all" onclick="setFilter('dept',null)">Tümü <span class="fc">${records.length}</span></button>`;
+  depts.forEach(d=>{
+    const cnt=records.filter(r=>r.dept?.includes(d)).length;
+    h+=`<button class="fb dept-fb" id="deptf-${CSS.escape(d)}" onclick="setFilter('dept','${d}')">${d} <span class="fc">${cnt}</span></button>`;
+  });
+  document.getElementById('dept-filters').innerHTML=h;
+
+  const rg=[{id:'all',label:'Tümü',min:0,max:999,color:'var(--gray-400)'},
+    {id:'low',label:'Önemsiz (1-4)',min:1,max:4,color:'#166534'},
+    {id:'med',label:'Kontrol (5-9)',min:5,max:9,color:'#92400E'},
+    {id:'high',label:'Düzeltici (10-15)',min:10,max:15,color:'#9A3412'},
+    {id:'crit',label:'Kritik (16+)',min:16,max:999,color:'var(--red)'}];
+  document.getElementById('risk-filters').innerHTML=rg.map(g=>{
+    const cnt=g.id==='all'?records.length:records.filter(r=>r.risk>=g.min&&r.risk<=g.max).length;
+    return `<div class="risk-item${activeFilter.risk===g.id?' active':''}" id="riskf-${g.id}" onclick="setFilter('riskGroup','${g.id}')">
+      <span class="rdot" style="background:${g.color}"></span>
+      <span style="flex:1">${g.label}</span>
+      <span class="fc">${cnt}</span>
+    </div>`;
+  }).join('');
+
+  // Mob dept chips
+  let mc=`<button class="fs-chip active" data-f="dept" data-v="all" onclick="setMobFilter(this,'dept',null)">Tümü</button>`;
+  depts.forEach(d=>{
+    mc+=`<button class="fs-chip" data-f="dept" data-v="${d}" onclick="setMobFilter(this,'dept','${d}')">${d}</button>`;
+  });
+  const el=document.getElementById('mob-dept-chips');
+  if(el) el.innerHTML=mc;
+}
+
+// ── MOB FILTER ──
+window.setMobFilter=function(btn,key,val){
+  activeFilter[key]=val||'all';
+  btn.closest('.fs-chips').querySelectorAll('.fs-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+window.openFilterSheet=function(){document.getElementById('filter-sheet').classList.add('open')}
+window.closeFilterSheet=function(){document.getElementById('filter-sheet').classList.remove('open');curPage=1;renderAll();}
+
+// ── MODALS ──
+window.openAdd=function(){
+  editingId=null; addPhotos=[]; addPhotoFiles=[];
+  document.getElementById('add-title').textContent='Yeni Uygunsuzluk';
+  clearForm();
+  document.getElementById('pua-preview').innerHTML='';
+  document.getElementById('mo-add').classList.add('open');
+}
+
+window.openEdit=function(id){
+  const r=records.find(x=>x.id===id);
+  if(!r) return;
+  editingId=id; addPhotos=[]; addPhotoFiles=[];
+  document.getElementById('add-title').textContent='Kaydı Düzenle';
+  document.getElementById('f-no').value=r.no||'';
+  // Date: handle various formats
+  let dval = '';
+  if(r.date && typeof r.date === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(r.date)) dval=r.date;
+  else if(r.date && typeof r.date === 'number') {
+    const base=new Date(1899,11,30);
+    const dt=new Date(base.getTime()+r.date*86400000);
+    dval=dt.toISOString().slice(0,10);
+  }
+  document.getElementById('f-date').value=dval||today();
+  document.getElementById('f-desc').value=r.desc||'';
+  document.getElementById('f-hazard').value=r.hazard||'';
+  document.getElementById('f-action').value=r.action||'';
+  document.getElementById('f-dept').value=r.dept||'';
+  document.getElementById('f-person').value=r.person||'';
+  document.getElementById('f-type').value=r.type||'Tehlike Bildirimi';
+  document.getElementById('f-finder').value=r.finder||'';
+  document.getElementById('f-prob').value=r.prob||'';
+  document.getElementById('f-sev').value=r.sev||'';
+  calcRisk();
+  // Show existing photos
+  const pp=document.getElementById('pua-preview');
+  pp.innerHTML=(r.photos||[]).map((url,i)=>`
+    <div class="prev-item">
+      <img class="prev-img" src="${url}" onclick="openLB('${url}')">
+      <div class="prev-del" onclick="removeExistingPhoto('${id}',${i})">×</div>
+    </div>`).join('');
+  document.getElementById('mo-add').classList.add('open');
+}
+
+window.removeExistingPhoto=async function(id,idx){
+  const r=records.find(x=>x.id===id);
+  if(!r||!r.photos) return;
+  const newPhotos=[...r.photos];
+  newPhotos.splice(idx,1);
+  await db.collection(COL).doc(id).update({photos:newPhotos});
+  openEdit(id); // refresh
+}
+
+window.openClose=function(id){
+  closingId=id; closePhotos=[]; closePhotoFiles=[];
+  const r=records.find(x=>x.id===id);
+  document.getElementById('cl-no-lbl').textContent=r?.no||'';
+  document.getElementById('cl-desc').value='';
+  document.getElementById('cl-date').value=today();
+  document.getElementById('cl-pua-preview').innerHTML='';
+  document.getElementById('mo-close').classList.add('open');
+}
+
+window.closeMo=function(id){
+  document.getElementById('mo-'+id).classList.remove('open');
+  if(id==='add'){clearForm();editingId=null;addPhotos=[];addPhotoFiles=[];}
+  if(id==='close'){closingId=null;closePhotos=[];closePhotoFiles=[];}
+}
+
+function clearForm(){
+  ['f-no','f-date','f-desc','f-hazard','f-action','f-dept','f-person','f-type','f-finder','f-prob','f-sev'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.value='';
+  });
+  document.getElementById('f-risk-val').textContent='—';
+  document.getElementById('f-risk-val').style.color='var(--g-dark)';
+}
+
+window.calcRisk=function(){
+  const p=parseInt(document.getElementById('f-prob').value)||0;
+  const s=parseInt(document.getElementById('f-sev').value)||0;
+  const r=p*s;
+  const el=document.getElementById('f-risk-val');
+  el.textContent=r||'—';
+  el.style.color=r>=16?'var(--red)':r>=10?'#9A3412':r>=5?'var(--amber)':'var(--g-dark)';
+}
+
+// ── DETAIL ──
+window.openDetail=function(id){
+  const r=records.find(x=>x.id===id);
+  if(!r) return;
+  const st=stNorm(r.status);
+  document.getElementById('d-no').textContent=r.no||'—';
+  document.getElementById('d-sub').textContent=fmtDate(r.date)+' · '+(r.dept||'')+(r.type?' · '+r.type:'');
+
+  const rc=riskCls(r.risk);
+  const stCls=st==='Kapalı'?'sb-closed':'sb-open';
+
+  document.getElementById('d-body').innerHTML=`
+    <div class="ds">
+      <div class="ds-title">Uygunsuzluk Bilgileri</div>
+      <div class="dg">
+        <div><div class="dk">No</div><div class="dv" style="font-family:'DM Mono',monospace">${r.no||'—'}</div></div>
+        <div><div class="dk">Tespit Tarihi</div><div class="dv">${fmtDate(r.date)}</div></div>
+        <div><div class="dk">Bölüm</div><div class="dv"><span class="dept-chip">${r.dept||'—'}</span></div></div>
+        <div><div class="dk">Sorumlu</div><div class="dv">${r.person||'—'}</div></div>
+        <div class="full"><div class="dk">Açıklama</div><div class="dv-box">${r.desc||'—'}</div></div>
+        <div class="full"><div class="dk">Tehlike</div><div class="dv-box">${r.hazard||'—'}</div></div>
+        <div class="full"><div class="dk">Aksiyon Önerisi</div><div class="dv-box">${r.action||'—'}</div></div>
+      </div>
+    </div>
+    ${r.photos?.length?`<div class="ds">
+      <div class="ds-title">📷 Uygunsuzluk Fotoğrafları (${r.photos.length})</div>
+      <div class="photo-gallery">${r.photos.map(u=>`<img class="gal-img" src="${u}" loading="lazy" onclick="openLB('${u}')">`).join('')}</div>
+    </div>`:''}
+    <div class="ds">
+      <div class="ds-title">Risk Değerlendirmesi</div>
+      <div class="dg">
+        <div><div class="dk">Olasılık × Şiddet</div><div class="dv">${r.prob||'—'} × ${r.sev||'—'}</div></div>
+        <div><div class="dk">Risk Skoru</div><div class="dv"><span class="rb ${rc}" style="padding:3px 10px;height:auto">${r.risk||'—'}</span> ${riskLabel(r.risk)}</div></div>
+      </div>
+    </div>
+    <div class="ds">
+      <div class="ds-title">Durum & Aksiyon</div>
+      <div class="dg">
+        <div><div class="dk">Durum</div><div class="dv"><span class="sb-badge ${stCls}"><span class="sb-dot"></span>${st}</span></div></div>
+        <div><div class="dk">Kapanış Tarihi</div><div class="dv">${fmtDate(r.closeDate)||'—'}</div></div>
+        ${r.actionDesc?`<div class="full"><div class="dk">Aksiyon Açıklaması</div><div class="dv-box">${r.actionDesc}</div></div>`:''}
+      </div>
+    </div>
+    ${r.closePhotos?.length?`<div class="ds">
+      <div class="ds-title">📷 Kapatma Fotoğrafları (${r.closePhotos.length})</div>
+      <div class="photo-gallery">${r.closePhotos.map(u=>`<img class="gal-img" src="${u}" loading="lazy" onclick="openLB('${u}')">`).join('')}</div>
+    </div>`:''}
+    <div class="ds">
+      <div class="ds-title">Kayıt Bilgileri</div>
+      <div class="dg">
+        <div><div class="dk">Aksiyon Türü</div><div class="dv">${r.type||'—'}</div></div>
+        <div><div class="dk">Tespit Eden</div><div class="dv">${r.finder||'—'}</div></div>
+      </div>
+    </div>`;
+
+  document.getElementById('d-foot').innerHTML=`
+    <button class="btn btn-outline" onclick="closeMo('detail')">Kapat</button>
+    <button class="btn btn-outline" onclick="closeMo('detail');openEdit('${r.id}')">✏️ Düzenle</button>
+    ${st==='Açık'?`<button class="btn btn-primary" onclick="closeMo('detail');openClose('${r.id}')">✓ Aksiyonu Kapat</button>`:''}
+  `;
+  document.getElementById('mo-detail').classList.add('open');
+}
+
+// ── PHOTOS ──
+window.handleFiles=function(files, ctx){
+  const arr=Array.from(files);
+  if(ctx==='add'){ addPhotoFiles.push(...arr); previewPhotos(arr,'pua-preview','add'); }
+  else{ closePhotoFiles.push(...arr); previewPhotos(arr,'cl-pua-preview','close'); }
+}
+window.handleDrop=function(e,ctx){
+  e.preventDefault();
+  handleFiles(e.dataTransfer.files,ctx);
+}
+function previewPhotos(files,previewId,ctx){
+  const wrap=document.getElementById(previewId);
+  files.forEach((f,i)=>{
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const idx=ctx==='add'?addPhotoFiles.indexOf(f):closePhotoFiles.indexOf(f);
+      const div=document.createElement('div');
+      div.className='prev-item';
+      div.innerHTML=`<img class="prev-img" src="${ev.target.result}">
+        <div class="prev-del" onclick="removeNewPhoto(this,'${ctx}',${idx})">×</div>`;
+      wrap.appendChild(div);
+    };
+    reader.readAsDataURL(f);
+  });
+}
+window.removeNewPhoto=function(btn,ctx,idx){
+  if(ctx==='add') addPhotoFiles.splice(idx,1);
+  else closePhotoFiles.splice(idx,1);
+  btn.closest('.prev-item').remove();
+}
+
+// ── LIGHTBOX ──
+window.openLB=function(url){
+  document.getElementById('lb-img').src=url;
+  document.getElementById('lightbox').classList.add('open');
+}
+window.closeLightbox=function(){
+  document.getElementById('lightbox').classList.remove('open');
+  document.getElementById('lb-img').src='';
+}
+
+// ── NOTIFY ──
+window.notify=function(msg,type=''){
+  const el=document.getElementById('notif');
+  el.textContent=msg;
+  el.className='notif show'+(type?' '+type:'');
+  setTimeout(()=>el.className='notif',3200);
+}
+
+// ── CLOSE ON OVERLAY ──
+['add','detail','close'].forEach(id=>{
+  const el=document.getElementById('mo-'+id);
+  if(el) el.addEventListener('click',e=>{if(e.target===el) closeMo(id);});
+});
+
+// ── START ──
+seedIfEmpty().then(() => listen()).catch(() => listen());
+</script>
+</body>
+</html>
